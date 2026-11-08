@@ -3,9 +3,9 @@ import docx
 from docx import Document
 from docx.shared import Inches, Pt, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.enum.table import WD_TABLE_ALIGNMENT, WD_ALIGN_VERTICAL
-from docx.oxml import OxmlElement, parse_xml
-from docx.oxml.ns import nsdecls, qn
+from docx.enum.table import WD_TABLE_ALIGNMENT
+from docx.oxml import parse_xml
+from docx.oxml.ns import nsdecls
 
 base_dir = r"C:\Users\RAYEN\.gemini\antigravity\scratch\CarRental-AWD"
 doc_dir = os.path.join(base_dir, "Documentation", "Technical_Document")
@@ -43,36 +43,20 @@ def add_styled_heading(text, level):
     if level == 1:
         h.paragraph_format.space_before = Pt(16)
         h.paragraph_format.space_after = Pt(6)
-        set_para_font(h, size=16, color=C_PRIMARY, bold=True)
+        set_para_font(h, size=15, color=C_PRIMARY, bold=True)
     elif level == 2:
         h.paragraph_format.space_before = Pt(12)
         h.paragraph_format.space_after = Pt(4)
-        set_para_font(h, size=13, color=C_SECONDARY, bold=True)
+        set_para_font(h, size=12.5, color=C_SECONDARY, bold=True)
     elif level == 3:
         h.paragraph_format.space_before = Pt(8)
         h.paragraph_format.space_after = Pt(2)
-        set_para_font(h, size=11.5, color=C_PRIMARY, bold=True)
+        set_para_font(h, size=11, color=C_PRIMARY, bold=True)
     return h
 
 def add_body_p(text, bold_prefix=None, space_after=4):
     p = doc.add_paragraph()
     p.paragraph_format.space_after = Pt(space_after)
-    p.paragraph_format.line_spacing = 1.15
-    if bold_prefix:
-        r_pre = p.add_run(bold_prefix)
-        r_pre.font.name = "Calibri"
-        r_pre.font.size = Pt(10.5)
-        r_pre.font.bold = True
-        r_pre.font.color.rgb = C_PRIMARY
-    r_body = p.add_run(text)
-    r_body.font.name = "Calibri"
-    r_body.font.size = Pt(10.5)
-    r_body.font.color.rgb = C_TEXT
-    return p
-
-def add_bullet_p(text, bold_prefix=None):
-    p = doc.add_paragraph(style='List Bullet')
-    p.paragraph_format.space_after = Pt(2)
     p.paragraph_format.line_spacing = 1.15
     if bold_prefix:
         r_pre = p.add_run(bold_prefix)
@@ -86,9 +70,38 @@ def add_bullet_p(text, bold_prefix=None):
     r_body.font.color.rgb = C_TEXT
     return p
 
+def add_bullet_p(text, bold_prefix=None):
+    p = doc.add_paragraph(style='List Bullet')
+    p.paragraph_format.space_after = Pt(2)
+    p.paragraph_format.line_spacing = 1.15
+    if bold_prefix:
+        r_pre = p.add_run(bold_prefix)
+        r_pre.font.name = "Calibri"
+        r_pre.font.size = Pt(9.5)
+        r_pre.font.bold = True
+        r_pre.font.color.rgb = C_PRIMARY
+    r_body = p.add_run(text)
+    r_body.font.name = "Calibri"
+    r_body.font.size = Pt(9.5)
+    r_body.font.color.rgb = C_TEXT
+    return p
+
+def add_diagram_image(img_name, caption_text, width_inches=6.0):
+    img_path = os.path.join(diag_dir, img_name)
+    if os.path.exists(img_path):
+        doc.add_paragraph().paragraph_format.space_before = Pt(6)
+        doc.add_picture(img_path, width=Inches(width_inches))
+        p_cap = doc.add_paragraph()
+        p_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p_cap.paragraph_format.space_after = Pt(6)
+        r_cap = p_cap.add_run(caption_text)
+        r_cap.font.name = "Calibri"
+        r_cap.font.size = Pt(8.5)
+        r_cap.font.italic = True
+        r_cap.font.color.rgb = C_MUTED
+
 def style_table(table, col_widths, headers, data):
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
-    # Header row
     hdr_cells = table.rows[0].cells
     for i, title in enumerate(headers):
         hdr_cells[i].text = title
@@ -98,11 +111,10 @@ def style_table(table, col_widths, headers, data):
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER
         for r in p.runs:
             r.font.name = "Calibri"
-            r.font.size = Pt(9.5)
+            r.font.size = Pt(9)
             r.font.bold = True
             r.font.color.rgb = RGBColor(255, 255, 255)
 
-    # Data rows
     for row_idx, row_data in enumerate(data):
         row_cells = table.add_row().cells
         fill_color = "F7FAFC" if row_idx % 2 == 1 else "FFFFFF"
@@ -114,10 +126,9 @@ def style_table(table, col_widths, headers, data):
             p.alignment = WD_ALIGN_PARAGRAPH.LEFT
             for r in p.runs:
                 r.font.name = "Calibri"
-                r.font.size = Pt(9)
+                r.font.size = Pt(8.5)
                 r.font.color.rgb = C_TEXT
 
-    # Apply widths
     for row in table.rows:
         for idx, width in enumerate(col_widths):
             row.cells[idx].width = Inches(width)
@@ -153,13 +164,13 @@ r_sub.font.color.rgb = C_SECONDARY
 p_sub.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
 p_meta = doc.add_paragraph()
-p_meta.paragraph_format.space_before = Pt(60)
+p_meta.paragraph_format.space_before = Pt(50)
 p_meta.paragraph_format.space_after = Pt(20)
 meta_text = """Équipe de Réalisation (Groupe de 6 Étudiants) :
 • Étudiant 1 : [Nom Étudiant 1] – Responsable User-Service (Auth & JWT)
 • Étudiant 2 : [Nom Étudiant 2] – Responsable Vehicle-Service (Flotte & Dispo)
-• Étudiant 3 : [Nom Étudiant 3] – Responsable Reservation-Service (Réservations)
-• Étudiant 4 : [Nom Étudiant 4] – Responsable Payment-Service (Paiements & Factures)
+• Étudiant 3 : [Nom Étudiant 3] – Responsable Reservation-Service (Réservations & Devis)
+• Étudiant 4 : [Nom Étudiant 4] – Responsable Payment-Service (Paiements & Facturation)
 • Étudiant 5 : [Nom Étudiant 5] – Responsable Agency-Service (Agences & Staff)
 • Étudiant 6 : [Nom Étudiant 6] – Responsable Review-Service (Avis NoSQL MongoDB)
 • Service Commun (Collectif) : API Gateway (Spring Cloud) + Eureka Server + RabbitMQ
@@ -182,11 +193,11 @@ add_styled_heading("Sommaire Général du Document", level=1)
 toc_items = [
     "1. Introduction Générale & Contexte du Projet",
     "2. Problématique Métier & Objectifs",
-    "3. Acteurs du Système & Cas d'Utilisation Généraux",
+    "3. Acteurs du Système & Diagramme de Cas d'Utilisation Général",
     "4. Principales Fonctionnalités du Système",
     "5. Architecture Globale des Microservices",
     "6. Justification du Découpage en 6 Microservices Métier + 1 Commun",
-    "7. Analyse Détaillée de Chaque Microservice Métier (Spécifications Exhaustives)",
+    "7. Analyse Détaillée de Chaque Microservice Métier (avec Diagrammes de Classes UML & Contrats d'API)",
     "    7.1. User-Service (Authentification, Sécurité & Rôles)",
     "    7.2. Vehicle-Service (Catalogue & Flotte Automobile)",
     "    7.3. Reservation-Service (Cycle de Vie des Réservations)",
@@ -195,13 +206,14 @@ toc_items = [
     "    7.6. Review-Service (Avis Clients, Notes & Modération NoSQL)",
     "    7.7. API Gateway & Infrastructure Commune (Eureka & RabbitMQ)",
     "8. Modèle de Communication Inter-Microservices : Synchrone vs Asynchrone",
-    "9. Diagrammes de Séquence des Parcours Clés",
-    "10. Stratégie de Persistance Polyglotte (PostgreSQL & MongoDB)",
-    "11. Architecture de Sécurité (Stateless JWT & Propagation de Contexte)",
-    "12. Organisation Git & Conventions de Travail en Équipe",
-    "13. Répartition Précise des Tâches entre les 6 Membres",
-    "14. Planning Prévisionnel & Analyse Proactive des Risques",
-    "15. Conclusion & Perspectives pour la Soutenance Finale"
+    "9. Diagrammes de Séquence des Parcours Clés (Réservation & Annulation)",
+    "10. Diagramme de Déploiement Conteneurisé (Docker & Docker Compose)",
+    "11. Stratégie de Persistance Polyglotte (PostgreSQL & MongoDB)",
+    "12. Architecture de Sécurité (Stateless JWT & Propagation de Contexte)",
+    "13. Organisation Git & Conventions de Travail en Équipe",
+    "14. Répartition Précise des Tâches entre les 6 Membres",
+    "15. Planning Prévisionnel & Analyse Proactive des Risques",
+    "16. Conclusion & Perspectives pour la Soutenance Finale"
 ]
 for item in toc_items:
     add_bullet_p(item)
@@ -209,7 +221,7 @@ for item in toc_items:
 doc.add_page_break()
 
 # =========================================================================
-# 1 & 2. INTRODUCTION, PROBLÉMATIQUE & OBJECTIFS
+# 1 & 2. INTRODUCTION & OBJECTIFS
 # =========================================================================
 add_styled_heading("1. Introduction Générale & Présentation du Projet", level=1)
 add_body_p("Le projet CarRental s'inscrit dans le cadre du module Architecture Web Distribuée (AWD) pour les étudiants de 4ème année d'ingénierie informatique (classe 4DAS). Il a pour objectif de concevoir, architecturer et déployer une plateforme moderne de location de véhicules en ligne, en appliquant les principes fondamentaux des systèmes distribués à base de microservices.")
@@ -239,18 +251,7 @@ add_bullet_p("Recherche des véhicules par critères, consulte les disponibilit�
 add_bullet_p("Consulte les réservations rattachées à son agence physique, valide la prise en charge et la restitution des véhicules, et met à jour l'état de la flotte locale (entretien, kilométrage).", bold_prefix="Employé d'Agence (Agent) : ")
 add_bullet_p("Supervise l'ensemble de la flotte nationale, gère le réseau d'agences, administre les comptes utilisateurs, modère les avis clients et analyse les métriques globales de l'entreprise.", bold_prefix="Administrateur : ")
 
-# Insert Diagram Cas Utilisation
-img_uc = os.path.join(diag_dir, "cas_utilisation.png")
-if os.path.exists(img_uc):
-    doc.add_paragraph().paragraph_format.space_before = Pt(6)
-    doc.add_picture(img_uc, width=Inches(6.8))
-    p_cap = doc.add_paragraph()
-    p_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    r_cap = p_cap.add_run("Figure 1 : Diagramme de Cas d'Utilisation Général de la Plateforme CarRental")
-    r_cap.font.name = "Calibri"
-    r_cap.font.size = Pt(9)
-    r_cap.font.italic = True
-    r_cap.font.color.rgb = C_MUTED
+add_diagram_image("Cas_Utilisation_General.png", "Figure 1 : Diagramme de Cas d'Utilisation Général UML de la Plateforme CarRental", width_inches=6.2)
 
 add_styled_heading("4. Principales Fonctionnalités du Système", level=1)
 features_headers = ["Module Fonctionnel", "Fonctionnalités Offertes", "Bénéfice Utilisateur"]
@@ -273,18 +274,7 @@ doc.add_page_break()
 add_styled_heading("5. Architecture Globale des Microservices", level=1)
 add_body_p("L'architecture globale de CarRental repose sur une décomposition modulaire en microservices indépendants, orchestrés par des composants d'infrastructure Spring Cloud éprouvés :")
 
-# Insert Global Architecture Image
-img_arch = os.path.join(diag_dir, "architecture_globale.png")
-if os.path.exists(img_arch):
-    doc.add_paragraph().paragraph_format.space_before = Pt(6)
-    doc.add_picture(img_arch, width=Inches(6.8))
-    p_cap = doc.add_paragraph()
-    p_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    r_cap = p_cap.add_run("Figure 2 : Architecture Globale Distribuée de CarRental (Frontend, Gateway, 6 Microservices, DBs)")
-    r_cap.font.name = "Calibri"
-    r_cap.font.size = Pt(9)
-    r_cap.font.italic = True
-    r_cap.font.color.rgb = C_MUTED
+add_diagram_image("Architecture_Globale.png", "Figure 2 : Diagramme d'Architecture Globale UML (Composants, Gateway, Eureka, RabbitMQ, Services et DBs)", width_inches=6.4)
 
 add_styled_heading("Composants Clés de l'Architecture :", level=2)
 add_bullet_p("Application SPA responsive développée sous Angular 17+, communiquant exclusivement avec l'API Gateway via HTTP/REST et jetons Bearer JWT.", bold_prefix="1. Frontend Angular (Port 4200) : ")
@@ -294,7 +284,7 @@ add_bullet_p("Broker AMQP (Port 5672) permettant la diffusion d'événements asy
 add_bullet_p("Chaque microservice métier possède son propre conteneur de données dédié, évitant tout couplage de schéma.", bold_prefix="5. Pattern Database-per-Service : ")
 
 add_styled_heading("6. Justification du Découpage en Microservices", level=1)
-add_body_p("Le découpage initial proposé de 6 microservices métier et d'un microservice commun a été rigoureusement analysé et validé par notre équipe d'architecture. Voici la justification pour chaque frontière de service (Bounded Context du Domain-Driven Design) :")
+add_body_p("Le découpage initial proposé de 6 microservices métier et d'un microservice commun a été rigoureusement analysé et validé par notre équipe d'architecture :")
 add_bullet_p("Isole la cryptographie, les tokens JWT et la persistance des utilisateurs. Aucun autre service n'a accès direct aux mots de passe chiffrés.", bold_prefix="User-Service (Étudiant 1) : ")
 add_bullet_p("Isole le catalogue des véhicules, soumis à des pics de lecture massifs. Peut être mis à l'échelle (scalabilité horizontale) sans dupliquer le reste de l'application.", bold_prefix="Vehicle-Service (Étudiant 2) : ")
 add_bullet_p("Constitue le coordinateur du cœur métier. Isole la logique temporelle des dates de location et le calcul des devis.", bold_prefix="Reservation-Service (Étudiant 3) : ")
@@ -306,20 +296,19 @@ add_bullet_p("Regroupe l'API Gateway, le serveur Eureka et le broker RabbitMQ, m
 doc.add_page_break()
 
 # =========================================================================
-# 7. ANALYSE DÉTAILLÉE DE CHAQUE MICROSERVICE
+# 7. ANALYSE DÉTAILLÉE DE CHAQUE MICROSERVICE (AVEC CLASSES UML)
 # =========================================================================
 add_styled_heading("7. Analyse Détaillée de Chaque Microservice Métier", level=1)
-add_body_p("Cette section fournit les spécifications exhaustives requises pour la validation intermédiaire pour chacun des 6 microservices métier ainsi que le service commun.")
 
 # 7.1 User Service
 add_styled_heading("7.1. User-Service (Responsable : Étudiant 1 - [Nom Étudiant 1])", level=2)
 add_bullet_p("Gestion des identités, inscription, authentification, émission des jetons JWT et attribution des rôles applicatifs.", bold_prefix="1. Nom & Responsabilité : ")
 add_bullet_p("Centraliser la sécurité et fournir une authentification unique sans état (stateless) réutilisable par l'ensemble de la plateforme.", bold_prefix="2. Problématique résolue : ")
 add_bullet_p("Inscription client, connexion sécurisée, génération de JWT, validation de token, consultation et mise à jour de profil.", bold_prefix="3. Fonctionnalités : ")
-add_bullet_p("Entité User (id, username, email, password, firstName, lastName, phoneNumber, driverLicenseNumber, enabled, createdAt) reliée en Many-to-Many à Role (id, name: ROLE_CLIENT, ROLE_AGENT, ROLE_ADMIN).", bold_prefix="4. Entités & Relations : ")
+add_bullet_p("Entité User reliée en Many-to-Many à Role. Rôles : ROLE_CLIENT, ROLE_AGENT, ROLE_ADMIN.", bold_prefix="4. Entités & Relations : ")
 add_bullet_p("PostgreSQL (user_db:5432). Justification : rigueur relationnelle, contraintes d'unicité strictes sur emails et noms d'utilisateur, respect ACID.", bold_prefix="5. Base de données : ")
-add_bullet_p("GlobalExceptionHandler avec réponses JSON normalisées RFC 7807 (400 Bad Request pour validation erronée, 401 Unauthorized pour mauvais identifiants).", bold_prefix="6. Gestion des erreurs : ")
-add_bullet_p("Interagit avec l'API Gateway pour la validation des requêtes entrantes.", bold_prefix="7. Interactions & Communication : ")
+
+add_diagram_image("Classes_User_Service.png", "Figure 3 : Diagramme de Classes UML - User Service (Entités, DTOs, Repositories, Services, Controllers)", width_inches=5.8)
 
 add_body_p("Contrats d'API REST du User-Service (Port 8081) :", bold_prefix="Contrats d'API : ")
 u_headers = ["Méthode", "Endpoint", "Paramètres / Body", "Codes HTTP", "Description"]
@@ -340,7 +329,8 @@ add_bullet_p("Offrir un catalogue performant et consultable en temps réel sans 
 add_bullet_p("Ajout/modification de véhicules, recherche filtrée, vérification de disponibilité, mise à jour d'état (AVAILABLE, RENTED, MAINTENANCE, OUT_OF_SERVICE).", bold_prefix="3. Fonctionnalités : ")
 add_bullet_p("Entité Vehicle reliée en Many-to-One à Category (name, baseRate). Énumérations VehicleStatus, FuelType, Transmission.", bold_prefix="4. Entités & Relations : ")
 add_bullet_p("PostgreSQL (vehicle_db:5433). Justification : unicité des immatriculations, indexation B-Tree performante sur les marques et statuts.", bold_prefix="5. Base de données : ")
-add_bullet_p("Synchrone (OpenFeign) : répond au Reservation-Service pour le tarif et la disponibilité. Asynchrone (RabbitMQ) : consomme les événements 'reservation.confirmed' pour basculer le véhicule en RENTED.", bold_prefix="6. Communication : ")
+
+add_diagram_image("Classes_Vehicle_Service.png", "Figure 4 : Diagramme de Classes UML - Vehicle Service", width_inches=5.8)
 
 add_body_p("Contrats d'API REST du Vehicle-Service (Port 8082) :", bold_prefix="Contrats d'API : ")
 v_headers = ["Méthode", "Endpoint", "Paramètres / Body", "Codes HTTP", "Description"]
@@ -362,7 +352,8 @@ add_bullet_p("Empêcher le surbooking, coordonner de façon résiliente la véri
 add_bullet_p("Création d'une réservation, calcul de durée et tarif, annulation avec conditions, suivi de statut (PENDING, CONFIRMED, ACTIVE, COMPLETED, CANCELLED).", bold_prefix="3. Fonctionnalités : ")
 add_bullet_p("Entité Reservation (reservationNumber, userId, vehicleId, pickupAgencyId, returnAgencyId, startDate, endDate, totalDays, dailyRate, totalPrice, status).", bold_prefix="4. Entités & Relations : ")
 add_bullet_p("PostgreSQL (reservation_db:5434). Justification : consistance transactionnelle ACID primordiale pour les contrats de location.", bold_prefix="5. Base de données : ")
-add_bullet_p("Synchrone (OpenFeign) : appelle Vehicle-Service (vérif) et Payment-Service (paiement). Asynchrone (RabbitMQ) : publie 'reservation.confirmed' et 'reservation.cancelled'.", bold_prefix="6. Communication : ")
+
+add_diagram_image("Classes_Reservation_Service.png", "Figure 5 : Diagramme de Classes UML - Reservation Service", width_inches=5.8)
 
 add_body_p("Contrats d'API REST du Reservation-Service (Port 8083) :", bold_prefix="Contrats d'API : ")
 r_headers = ["Méthode", "Endpoint", "Paramètres / Body", "Codes HTTP", "Description"]
@@ -383,7 +374,8 @@ add_bullet_p("Fournir un moteur de paiement sans dépendance externe, simulant f
 add_bullet_p("Traitement de paiement, émission automatique de facture (INV-XXXX), consultation de reçu, émission d'avoirs de remboursement.", bold_prefix="3. Fonctionnalités : ")
 add_bullet_p("Entité Payment reliée en One-to-One à Invoice. Énumérations PaymentStatus, PaymentMethod (CREDIT_CARD, PAYPAL, CASH_ON_PICKUP).", bold_prefix="4. Entités & Relations : ")
 add_bullet_p("PostgreSQL (payment_db:5435). Justification : traçabilité financière, conformité fiscale et auditabilité stricte.", bold_prefix="5. Base de données : ")
-add_bullet_p("Synchrone (OpenFeign) : reçoit la demande de paiement et répond immédiatement. Asynchrone : publie 'payment.completed' sur RabbitMQ.", bold_prefix="6. Communication : ")
+
+add_diagram_image("Classes_Payment_Service.png", "Figure 6 : Diagramme de Classes UML - Payment Service", width_inches=5.8)
 
 add_body_p("Contrats d'API REST du Payment-Service (Port 8084) :", bold_prefix="Contrats d'API : ")
 p_headers = ["Méthode", "Endpoint", "Paramètres / Body", "Codes HTTP", "Description"]
@@ -401,9 +393,10 @@ add_styled_heading("7.5. Agency-Service (Responsable : Étudiant 5 - [Nom Étudi
 add_bullet_p("Gestion du réseau physique d'agences de départ/restitution, adresses, coordonnées et rattachement des employés.", bold_prefix="1. Nom & Responsabilité : ")
 add_bullet_p("Permettre la localisation des agences et affecter le personnel local sans mélanger les données avec les véhicules ou réservations.", bold_prefix="2. Problématique résolue : ")
 add_bullet_p("Répertoire des agences, filtrage par ville, gestion des horaires d'ouverture, gestion du staff d'agence.", bold_prefix="3. Fonctionnalités : ")
-add_bullet_p("Entité Agency avec Address embarquée (@Embedded : street, city, zipCode, country, lat/long), reliée à AgencyStaff.", bold_prefix="4. Entités & Relations : ")
+add_bullet_p("Entité Agency avec Address embarquée (@Embedded), reliée à AgencyStaff.", bold_prefix="4. Entités & Relations : ")
 add_bullet_p("PostgreSQL (agency_db:5436). Justification : intégrité des données d'adresses, requêtes géographiques.", bold_prefix="5. Base de données : ")
-add_bullet_p("Synchrone : interrogé lors de l'enregistrement de véhicules ou du choix de l'agence de retrait.", bold_prefix="6. Communication : ")
+
+add_diagram_image("Classes_Agency_Service.png", "Figure 7 : Diagramme de Classes UML - Agency Service", width_inches=5.8)
 
 add_body_p("Contrats d'API REST de l'Agency-Service (Port 8085) :", bold_prefix="Contrats d'API : ")
 a_headers = ["Méthode", "Endpoint", "Paramètres / Body", "Codes HTTP", "Description"]
@@ -424,7 +417,8 @@ add_bullet_p("Stocker et servir de gros volumes d'évaluations textuelles sans s
 add_bullet_p("Dépôt d'avis avec note (1 à 5), consultation des avis par véhicule ou agence, calcul de moyenne, modération (APPROVED, REJECTED).", bold_prefix="3. Fonctionnalités : ")
 add_bullet_p("Document MongoDB Review (id, userId, targetType: VEHICLE / AGENCY, targetId, rating, comment, status, createdAt).", bold_prefix="4. Modèle de Données : ")
 add_bullet_p("MongoDB (review_db:27017). Justification : schéma NoSQL flexible, ciblage polymorphe, haute performance en lecture.", bold_prefix="5. Base de données : ")
-add_bullet_p("Totalement découplé : accessible par le Frontend via la Gateway, aucune dépendance bloquante avec les autres services.", bold_prefix="6. Communication : ")
+
+add_diagram_image("Classes_Review_Service.png", "Figure 8 : Diagramme de Classes UML - Review Service (MongoDB)", width_inches=5.8)
 
 add_body_p("Contrats d'API REST du Review-Service (Port 8086) :", bold_prefix="Contrats d'API : ")
 rv_headers = ["Méthode", "Endpoint", "Paramètres / Body", "Codes HTTP", "Description"]
@@ -437,86 +431,38 @@ rv_data = [
 t_rv = doc.add_table(rows=1, cols=5)
 style_table(t_rv, [0.8, 2.0, 1.4, 1.0, 1.6], rv_headers, rv_data)
 
-# 7.7 Common Service
-add_styled_heading("7.7. Service Commun & Infrastructure (Développé Collectivement)", level=2)
-add_bullet_p("Routage unifié, découverte dynamique, bus d'événements, configuration CORS et orchestration conteneurisée.", bold_prefix="1. Responsabilités Collectives : ")
-add_bullet_p("Spring Cloud Gateway (port 8080) avec prédicats de routage /api/** vers Eureka, filtres réactifs et en-têtes CORS.", bold_prefix="2. API Gateway : ")
-add_bullet_p("Netflix Eureka Server (port 8761) maintenant le registre des services avec détection des pannes par heartbeat.", bold_prefix="3. Service Discovery : ")
-add_bullet_p("RabbitMQ (port 5672) avec un Topic Exchange 'carrental.topic' pour la communication asynchrone découplée.", bold_prefix="4. Message Broker : ")
-
 doc.add_page_break()
 
 # =========================================================================
-# 8 & 9. COMMUNICATIONS & DIAGRAMMES DE SÉQUENCE
+# 8, 9 & 10. COMMUNICATIONS, SÉQUENCES & DÉPLOIEMENT
 # =========================================================================
 add_styled_heading("8. Modèle de Communication Inter-Microservices", level=1)
 add_body_p("CarRental utilise un modèle hybride équilibré, tirant parti des forces de la communication synchrone et asynchrone :")
 
-# Insert Sync vs Async Diagram
-img_comm = os.path.join(diag_dir, "communication_sync_async.png")
-if os.path.exists(img_comm):
-    doc.add_paragraph().paragraph_format.space_before = Pt(6)
-    doc.add_picture(img_comm, width=Inches(6.8))
-    p_cap = doc.add_paragraph()
-    p_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    r_cap = p_cap.add_run("Figure 3 : Comparatif Synchrone (OpenFeign) vs Asynchrone (RabbitMQ AMQP)")
-    r_cap.font.name = "Calibri"
-    r_cap.font.size = Pt(9)
-    r_cap.font.italic = True
-    r_cap.font.color.rgb = C_MUTED
+add_diagram_image("Communication_Synchrone_Asynchrone.png", "Figure 9 : Diagramme de Communication Inter-Services UML (Synchrone OpenFeign vs Asynchrone RabbitMQ)", width_inches=6.2)
 
-add_bullet_p("Utilisé lorsque le résultat d'un service distant est impératif pour continuer la transaction en cours. Exemple : Reservation-Service interroge Vehicle-Service pour le tarif journalier et Payment-Service pour la validation immédiate du paiement. Protection assurée par Resilience4j (Circuit Breaker).", bold_prefix="1. Communication Synchrone (Spring Cloud OpenFeign) : ")
-add_bullet_p("Utilisé pour les traitements secondaires et le découplage temporel. Exemple : une fois la réservation confirmée, Reservation-Service émet un événement 'reservation.confirmed' vers RabbitMQ. Le Vehicle-Service consomme cet événement pour actualiser son état sans ralentir la réponse au client.", bold_prefix="2. Communication Asynchrone (RabbitMQ) : ")
+add_styled_heading("9. Diagrammes de Séquence des Parcours Clés", level=1)
+add_body_p("Le diagramme de séquence ci-dessous illustre le parcours complet d'une réservation avec vérification de disponibilité, calcul de devis, simulation de paiement et émission d'événement asynchrone :")
 
-add_styled_heading("9. Diagramme de Séquence du Parcours de Réservation Complet", level=1)
-add_body_p("Le diagramme de séquence ci-dessous illustre le parcours de bout en bout d'un client effectuant une réservation de voiture sur la plateforme :")
+add_diagram_image("Sequence_Reservation_Complete.png", "Figure 10 : Diagramme de Séquence UML du Parcours Complet de Réservation", width_inches=6.4)
 
-# Insert Sequence Diagram
-img_seq = os.path.join(diag_dir, "sequence_reservation.png")
-if os.path.exists(img_seq):
-    doc.add_paragraph().paragraph_format.space_before = Pt(6)
-    doc.add_picture(img_seq, width=Inches(6.8))
-    p_cap = doc.add_paragraph()
-    p_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    r_cap = p_cap.add_run("Figure 4 : Diagramme de Séquence du Parcours Complet de Réservation et Simulation de Paiement")
-    r_cap.font.name = "Calibri"
-    r_cap.font.size = Pt(9)
-    r_cap.font.italic = True
-    r_cap.font.color.rgb = C_MUTED
+add_body_p("En cas d'annulation de la location par le client, le scénario suivant s'exécute avec émission d'avoir et remise en disponibilité du véhicule :")
 
-add_body_p("Détail des étapes du parcours :")
-add_bullet_p("Le client consulte le catalogue sur le frontend Angular via GET /api/vehicles/search.", bold_prefix="Étape 1 (Recherche) : ")
-add_bullet_p("L'API Gateway valide l'existence du véhicule et son tarif journalier (45€).", bold_prefix="Étape 2 (Vérification) : ")
-add_bullet_p("Le client soumet les dates (ex: 5 jours). Le Reservation-Service calcule 5 x 45€ = 225€ et crée la réservation avec le statut PENDING.", bold_prefix="Étape 3 (Création PENDING) : ")
-add_bullet_p("Le Reservation-Service appelle Payment-Service en synchrone (Feign). Le paiement est validé (PAID) et une facture est générée (#INV-101).", bold_prefix="Étape 4 (Simulation Paiement) : ")
-add_bullet_p("La réservation passe au statut CONFIRMED. Un événement 'reservation.confirmed' est émis sur RabbitMQ pour mettre à jour la flotte de manière asynchrone.", bold_prefix="Étape 5 (Confirmation & Événement) : ")
-add_bullet_p("Le client reçoit sa confirmation avec le numéro de réservation et la facture téléchargeable.", bold_prefix="Étape 6 (Réponse Client) : ")
+add_diagram_image("Sequence_Annulation_Paiement.png", "Figure 11 : Diagramme de Séquence UML du Parcours d'Annulation et de Remboursement", width_inches=6.2)
 
-doc.add_page_break()
-
-# =========================================================================
-# 10, 11 & 12. DÉPLOIEMENT, SÉCURITÉ & ORGANISATION GIT
-# =========================================================================
 add_styled_heading("10. Diagramme de Déploiement Conteneurisé (Docker)", level=1)
-add_body_p("Tous les composants du système sont conteneurisés et orchestrés via Docker Compose sur un réseau virtuel privé sécurisé :")
+add_body_p("L'ensemble des composants applicatifs et des bases de données sont encapsulés dans des conteneurs Docker reliés par le réseau virtuel 'carrental-network' :")
 
-img_dep = os.path.join(diag_dir, "deploiement_docker.png")
-if os.path.exists(img_dep):
-    doc.add_paragraph().paragraph_format.space_before = Pt(6)
-    doc.add_picture(img_dep, width=Inches(6.8))
-    p_cap = doc.add_paragraph()
-    p_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    r_cap = p_cap.add_run("Figure 5 : Diagramme de Déploiement Conteneurisé avec Docker & Docker Compose")
-    r_cap.font.name = "Calibri"
-    r_cap.font.size = Pt(9)
-    r_cap.font.italic = True
-    r_cap.font.color.rgb = C_MUTED
+add_diagram_image("Deploiement_Docker.png", "Figure 12 : Diagramme de Déploiement UML Conteneurisé avec Docker Compose", width_inches=6.2)
 
+# =========================================================================
+# 11, 12, 13, 14 & 15. PERSISTANCE, SÉCURITÉ, GIT, PLANNING, CONCLUSION
+# =========================================================================
 add_styled_heading("11. Sécurité & Authentification Stateless JWT", level=1)
-add_body_p("L'architecture implémente une stratégie de sécurité moderne et découplée :")
-add_bullet_p("L'utilisateur s'authentifie une seule fois auprès du User-Service. En cas de succès, un token JWT cryptographiquement signé (algorithme HMAC-SHA256) contenant les identifiants et rôles est retourné.", bold_prefix="1. Émission Stateless : ")
+add_body_p("L'architecture implémente une sécurité par jetons JWT (JSON Web Tokens) signés en HMAC-SHA256 :")
+add_bullet_p("L'utilisateur s'authentifie une seule fois auprès du User-Service. Le service vérifie le mot de passe haché et retourne un token signé contenant l'ID utilisateur, l'email et ses rôles.", bold_prefix="1. Émission Stateless : ")
 add_bullet_p("Le client Angular injecte automatiquement le header 'Authorization: Bearer <token>' grâce à son JwtInterceptor.", bold_prefix="2. Injection Automatique : ")
-add_bullet_p("L'API Gateway valide la signature du token à la volée. Elle extrait les claims (userId, rôles) et les injecte dans des en-têtes HTTP internes ('X-User-Id', 'X-User-Roles') transmis aux microservices métier. Les services internes n'ont ainsi pas besoin de réinterroger la base des utilisateurs.", bold_prefix="3. Propagation Gateway : ")
+add_bullet_p("L'API Gateway valide la signature du token à la volée. Elle extrait les claims (userId, rôles) et les injecte dans des en-têtes HTTP internes ('X-User-Id', 'X-User-Roles') transmis aux microservices métier.", bold_prefix="3. Propagation Gateway : ")
 
 add_styled_heading("12. Organisation du Dépôt Git & Gestion de Projet", level=1)
 add_body_p("L'équipe applique le modèle GitFlow adapté aux microservices :")
@@ -524,11 +470,7 @@ add_bullet_p("Branche de production contenant uniquement le code stable et valid
 add_bullet_p("Branche d'intégration continue où sont fusionnées les fonctionnalités de chaque étudiant.", bold_prefix="• develop : ")
 add_bullet_p("Branches de travail individuelles (ex: feature/user-auth, feature/vehicle-catalog, feature/reservation-flow).", bold_prefix="• feature/<nom> : ")
 add_bullet_p("Format conventionnel des messages de commit : 'feat(service): description', 'fix(service): description', 'docs(uml): description'.", bold_prefix="• Convention de commits : ")
-add_bullet_p("Outil de gestion : GitHub Projects (Kanban avec colonnes To Do, In Progress, Code Review, Done) et Postman pour les collections d'APIs partagées.", bold_prefix="• Outil de suivi : ")
 
-# =========================================================================
-# 13, 14 & 15. RÉPARTITION, PLANNING, RISQUES & CONCLUSION
-# =========================================================================
 add_styled_heading("13. Répartition des Tâches entre les Membres de l'Équipe", level=1)
 team_headers = ["Étudiant", "Microservice Dédié", "Responsabilité Clé", "Livrables Produits"]
 team_data = [
@@ -544,8 +486,6 @@ t_team = doc.add_table(rows=1, cols=4)
 style_table(t_team, [1.6, 1.4, 2.0, 1.8], team_headers, team_data)
 
 add_styled_heading("14. Planning Prévisionnel & Analyse des Risques Techniques", level=1)
-add_body_p("Le projet respecte une progression rigoureuse en 8 séances. Le jalon intermédiaire (Séance 4) valide la conception, les diagrammes d'architecture, la structure Git et les squelettes d'APIs.")
-
 risk_headers = ["Risque Technique Identifié", "Niveau", "Impact", "Stratégie de Résolution Adoptée"]
 risk_data = [
     ["Indisponibilité d'un service lors d'un appel synchrone", "🔴 Élevé", "Blocage de commande", "Circuit Breaker Resilience4j avec méthode Fallback"],
@@ -558,8 +498,14 @@ t_risk = doc.add_table(rows=1, cols=4)
 style_table(t_risk, [2.2, 0.9, 1.5, 2.2], risk_headers, risk_data)
 
 add_styled_heading("15. Conclusion & Perspectives", level=1)
-add_body_p("Cette validation intermédiaire (Séance 4) démontre la maturité de la conception architecturale de CarRental. L'ensemble des 6 microservices métier et du service commun dispose d'un périmètre d'action clairement délimité, de contrats d'API normalisés, de diagrammes UML cohérents avec le code source et d'un environnement de déploiement conteneurisé prêt à l'emploi.")
+add_body_p("Cette validation intermédiaire (Séance 4) démontre la maturité de la conception architecturale de CarRental. L'ensemble des 6 microservices métier et du service commun dispose d'un périmètre d'action clairement délimité, de diagrammes UML conformes aux standards académiques, de contrats d'API normalisés et d'un environnement de déploiement conteneurisé prêt à l'emploi.")
 add_body_p("Les prochaines séances seront consacrées à la finalisation de l'implémentation des couches métier, au branchement définitif des écouteurs RabbitMQ, à l'interconnexion complète avec le Frontend Angular et à la réalisation de tests d'intégration de bout en bout avant la soutenance finale du projet AWD.")
 
-doc.save(docx_path)
-print(f"Technical document created successfully at {docx_path}")
+try:
+    doc.save(docx_path)
+    print(f'Technical document saved at {docx_path}')
+except Exception as e:
+    alt_path = os.path.join(doc_dir, 'Dossier_Technique_CarRental_UML.docx')
+    doc.save(alt_path)
+    print(f'Original file was locked (open in Word). Saved updated version with authentic UML at {alt_path}')
+print(f"Technical document with authentic UML diagrams saved at {docx_path}")
