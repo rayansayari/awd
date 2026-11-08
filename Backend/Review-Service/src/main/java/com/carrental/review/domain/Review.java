@@ -1,22 +1,34 @@
 package com.carrental.review.domain;
 
+import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 
-@Document(collection = "reviews")
+@Entity
+@Table(name = "reviews")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class Review {
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
+    @Column(nullable = false)
     private Long userId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ReviewTargetType targetType;
+
+    @Column(nullable = false)
     private Long targetId;
+
+    @Column(nullable = false)
     private Integer rating; // 1 à 5
+
+    @Column(length = 1000)
     private String comment;
 
+    @Enumerated(EnumType.STRING)
     @Builder.Default
     private ModerationStatus status = ModerationStatus.APPROVED;
 

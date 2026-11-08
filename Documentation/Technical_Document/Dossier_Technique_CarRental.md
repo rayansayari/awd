@@ -16,7 +16,7 @@
 7. [Spécifications Détaillées des 6 Microservices Métier + Commun](#7-spécifications-détaillées-des-microservices)
 8. [Modèle de Communication : Synchrone vs Asynchrone](#8-modèle-de-communication-inter-services)
 9. [Diagrammes de Séquence des Parcours Clés](#9-diagrammes-de-séquence)
-10. [Stratégie de Persistance Polyglotte (PostgreSQL & MongoDB)](#10-stratégie-de-persistance-polyglotte)
+10. [Stratégie de Persistance Polyglotte (MySQL 8.0)](#10-stratégie-de-persistance-polyglotte)
 11. [Sécurité Stateless & Propagation JWT](#11-sécurité-stateless--propagation-jwt)
 12. [Organisation Git & Gestion de Projet](#12-organisation-git--gestion-de-projet)
 13. [Répartition des Tâches entre les 6 Membres](#13-répartition-des-tâches)
@@ -41,7 +41,7 @@ En mettant en relation directe les clients et un réseau d'agences physiques, la
 
 ### Objectifs
 - Découpage pur en 6 microservices métier + 1 service commun (Gateway + Eureka + RabbitMQ).
-- Application du pattern **Database-per-Service** (5 bases PostgreSQL + 1 base NoSQL MongoDB).
+- Application du pattern **Database-per-Service** (5 bases MySQL + 1 base MySQL MySQL).
 - Communication hybride : **Synchrone** (OpenFeign / REST) et **Asynchrone** (RabbitMQ AMQP).
 - Application cliente Single Page Application (SPA) en **Angular 17+**.
 - Déploiement conteneurisé complet avec **Docker Compose**.
@@ -94,7 +94,7 @@ En mettant en relation directe les clients et un réseau d'agences physiques, la
       │             │             │             │             │             │
       ▼             ▼             ▼             ▼             ▼             ▼
   [(user_db)]  [(veh_db)]    [(res_db)]    [(pay_db)]    [(agn_db)]   [(rev_db)]
-   PostgreSQL   PostgreSQL    PostgreSQL    PostgreSQL    PostgreSQL     MongoDB
+   MySQL   MySQL    MySQL    MySQL    MySQL     MySQL
 ```
 
 ---
@@ -105,7 +105,7 @@ En mettant en relation directe les clients et un réseau d'agences physiques, la
 - **Reservation-Service (Étudiant 3) :** Cœur du système, isole le contrôle temporel et le calcul des devis.
 - **Payment-Service (Étudiant 4) :** Isole la logique financière, les factures et les transactions.
 - **Agency-Service (Étudiant 5) :** Isole les adresses physiques et le personnel d'agence.
-- **Review-Service (Étudiant 6) :** Isole les commentaires libres sous MongoDB pour ne pas surcharger les bases relationnelles.
+- **Review-Service (Étudiant 6) :** Isole les commentaires libres sous MySQL pour ne pas surcharger les bases relationnelles.
 - **API Gateway + Discovery (Collectif) :** Mutualise la sécurité, le routage et la découverte.
 
 ---
@@ -113,7 +113,7 @@ En mettant en relation directe les clients et un réseau d'agences physiques, la
 ## 7. Spécifications Détaillées des Microservices
 
 ### 7.1. User-Service (Étudiant 1 - [Nom Étudiant 1])
-- **Base :** PostgreSQL (`user_db:5432`)
+- **Base :** MySQL (`user_db:3306`)
 - **Entités :** `User`, `Role`, enum `RoleName`.
 - **Endpoints :**
   - `POST /api/auth/register` (201 Created)
@@ -122,7 +122,7 @@ En mettant en relation directe les clients et un réseau d'agences physiques, la
   - `GET /api/users/{id}` (200 OK / 404 Not Found)
 
 ### 7.2. Vehicle-Service (Étudiant 2 - [Nom Étudiant 2])
-- **Base :** PostgreSQL (`vehicle_db:5433`)
+- **Base :** MySQL (`vehicle_db:3306`)
 - **Entités :** `Vehicle`, `Category`, enums `VehicleStatus`, `FuelType`, `Transmission`.
 - **Endpoints :**
   - `GET /api/vehicles` (200 OK)
@@ -132,7 +132,7 @@ En mettant en relation directe les clients et un réseau d'agences physiques, la
   - `PATCH /api/vehicles/{id}/status` (200 OK)
 
 ### 7.3. Reservation-Service (Étudiant 3 - [Nom Étudiant 3])
-- **Base :** PostgreSQL (`reservation_db:5434`)
+- **Base :** MySQL (`reservation_db:3306`)
 - **Entités :** `Reservation`, enum `ReservationStatus`.
 - **Endpoints :**
   - `POST /api/reservations` (201 Created)
@@ -141,7 +141,7 @@ En mettant en relation directe les clients et un réseau d'agences physiques, la
   - `PUT /api/reservations/{id}/cancel` (200 OK)
 
 ### 7.4. Payment-Service (Étudiant 4 - [Nom Étudiant 4])
-- **Base :** PostgreSQL (`payment_db:5435`)
+- **Base :** MySQL (`payment_db:3306`)
 - **Entités :** `Payment`, `Invoice`, enums `PaymentStatus`, `PaymentMethod`.
 - **Endpoints :**
   - `POST /api/payments/process` (201 Created)
@@ -150,7 +150,7 @@ En mettant en relation directe les clients et un réseau d'agences physiques, la
   - `POST /api/payments/refund/{resId}` (200 OK)
 
 ### 7.5. Agency-Service (Étudiant 5 - [Nom Étudiant 5])
-- **Base :** PostgreSQL (`agency_db:5436`)
+- **Base :** MySQL (`agency_db:3306`)
 - **Entités :** `Agency`, `Address` (Embedded), `AgencyStaff`.
 - **Endpoints :**
   - `GET /api/agencies` (200 OK)
@@ -159,7 +159,7 @@ En mettant en relation directe les clients et un réseau d'agences physiques, la
   - `POST /api/agencies` (201 Created)
 
 ### 7.6. Review-Service (Étudiant 6 - [Nom Étudiant 6])
-- **Base :** MongoDB (`review_db:27017`)
+- **Base :** MySQL (`review_db:3306`)
 - **Entités :** `Review`, enums `ReviewTargetType` (`VEHICLE`, `AGENCY`), `ModerationStatus`.
 - **Endpoints :**
   - `POST /api/reviews` (201 Created)
@@ -188,8 +188,8 @@ Le parcours complet d'une réservation comprend 6 étapes :
 ---
 
 ## 10. Stratégie de Persistance Polyglotte
-- **PostgreSQL 15 :** Choisi pour 5 services pour respecter les propriétés ACID, les contraintes relationnelles d'unicité et la gestion financière.
-- **MongoDB 6.0 :** Choisi pour le Review-Service afin de stocker des documents semi-structurés, permettre un ciblage polymorphe (véhicules ou agences) et offrir des performances de lecture optimales.
+- **MySQL 8.0 :** Choisi pour 5 services pour respecter les propriétés ACID, les contraintes relationnelles d'unicité et la gestion financière.
+- **MySQL 8.0 :** Choisi pour le Review-Service afin de stocker des documents semi-structurés, permettre un ciblage polymorphe (véhicules ou agences) et offrir des performances de lecture optimales.
 
 ---
 
@@ -216,7 +216,7 @@ Le parcours complet d'une réservation comprend 6 étapes :
 | **Étudiant 3** | Reservation-Service | Dates, Devis, Coordination inter-services |
 | **Étudiant 4** | Payment-Service | Simulation financière, Factures, Remboursements |
 | **Étudiant 5** | Agency-Service | Points de retrait, Adresses, Employés locaux |
-| **Étudiant 6** | Review-Service | Avis NoSQL MongoDB, Notes 1-5, Modération |
+| **Étudiant 6** | Review-Service | Avis MySQL MySQL, Notes 1-5, Modération |
 | **Collectif** | Gateway & Infra | Routage, Eureka, RabbitMQ, Docker Compose |
 
 ---

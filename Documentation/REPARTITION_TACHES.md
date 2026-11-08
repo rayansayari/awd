@@ -10,12 +10,12 @@ Chaque étudiant dispose d'un microservice dédié, d'un périmètre précis de 
 
 | Membre de l'Équipe | Microservice Attribué | Rôle & Responsabilité Principale | Base de Données | Technologies Clés |
 |---|---|---|---|---|
-| **Étudiant 1**<br/>`[Nom Étudiant 1]` | **User-Service** | Authentification, JWT, Gestion des comptes, Rôles & Sécurité | PostgreSQL (`user_db`) | Spring Boot, Spring Security, JJWT, JPA |
-| **Étudiant 2**<br/>`[Nom Étudiant 2]` | **Vehicle-Service** | Parc automobile, Disponibilités, Filtres & Catégories | PostgreSQL (`vehicle_db`) | Spring Boot, JPA, Hibernate Search |
-| **Étudiant 3**<br/>`[Nom Étudiant 3]` | **Reservation-Service** | Cycle de vie des réservations, Devis, Coordination métier | PostgreSQL (`reservation_db`) | Spring Boot, OpenFeign, RabbitMQ (Producer) |
-| **Étudiant 4**<br/>`[Nom Étudiant 4]` | **Payment-Service** | Simulation de paiement, Facturation, Statuts transactions | PostgreSQL (`payment_db`) | Spring Boot, OpenFeign, RabbitMQ (Producer) |
-| **Étudiant 5**<br/>`[Nom Étudiant 5]` | **Agency-Service** | Agences physiques, Géolocalisation, Employés locaux | PostgreSQL (`agency_db`) | Spring Boot, JPA, Spacial Queries |
-| **Étudiant 6**<br/>`[Nom Étudiant 6]` | **Review-Service** | Évaluations, Notes (1-5), Commentaires, Modération | MongoDB (`review_db`) | Spring Boot, Spring Data MongoDB |
+| **Étudiant 1**<br/>`[Nom Étudiant 1]` | **User-Service** | Authentification, JWT, Gestion des comptes, Rôles & Sécurité | MySQL (`user_db`) | Spring Boot, Spring Security, JJWT, JPA |
+| **Étudiant 2**<br/>`[Nom Étudiant 2]` | **Vehicle-Service** | Parc automobile, Disponibilités, Filtres & Catégories | MySQL (`vehicle_db`) | Spring Boot, JPA, Hibernate Search |
+| **Étudiant 3**<br/>`[Nom Étudiant 3]` | **Reservation-Service** | Cycle de vie des réservations, Devis, Coordination métier | MySQL (`reservation_db`) | Spring Boot, OpenFeign, RabbitMQ (Producer) |
+| **Étudiant 4**<br/>`[Nom Étudiant 4]` | **Payment-Service** | Simulation de paiement, Facturation, Statuts transactions | MySQL (`payment_db`) | Spring Boot, OpenFeign, RabbitMQ (Producer) |
+| **Étudiant 5**<br/>`[Nom Étudiant 5]` | **Agency-Service** | Agences physiques, Géolocalisation, Employés locaux | MySQL (`agency_db`) | Spring Boot, JPA, Spacial Queries |
+| **Étudiant 6**<br/>`[Nom Étudiant 6]` | **Review-Service** | Évaluations, Notes (1-5), Commentaires, Modération | MySQL (`review_db`) | Spring Boot, Spring Data MySQL |
 | **Collectif (Présenté par Étudiant 1 ou 3)** | **API Gateway + Discovery** | Routage centralisé, Enregistrement Eureka, Sécurité CORS, Docker | - | Spring Cloud Gateway, Netflix Eureka, Docker Compose |
 
 ---
@@ -37,9 +37,9 @@ Chaque étudiant dispose d'un microservice dédié, d'un périmètre précis de 
   - `GET /api/users/{id}` (Code 200 OK / 404 Not Found)
   - `PUT /api/users/{id}` (Code 200 OK)
   - `GET /api/auth/validate` (Code 200 OK)
-- **Base de données :** PostgreSQL (`user_db`) – Tables `users`, `roles`, `user_roles`.
+- **Base de données :** MySQL (`user_db`) – Tables `users`, `roles`, `user_roles`.
 - **Speech Oral (1 minute) :**
-  > *"Bonjour, je suis [Nom Étudiant 1] et j'ai en charge le User-Service. Ce microservice est le garant de la sécurité et de l'identité au sein de CarRental. Il résout la problématique de la gestion centralisée des accès sans créer de couplage fort avec les autres services, grâce à l'émission de jetons stateless JWT. Lors de l'inscription ou de la connexion d'un client, le service vérifie les informations d'identification, attribue les rôles comme ROLE_CLIENT ou ROLE_ADMIN, et retourne un token signé. La base de données PostgreSQL a été choisie pour garantir la rigueur relationnelle des rôles et l'intégrité des comptes. Ce token est ensuite validé au niveau de l'API Gateway pour sécuriser toutes les requêtes en aval. Mes endpoints principaux sont /api/auth/register et /api/auth/login. Je suis prêt pour vos questions techniques."*
+  > *"Bonjour, je suis [Nom Étudiant 1] et j'ai en charge le User-Service. Ce microservice est le garant de la sécurité et de l'identité au sein de CarRental. Il résout la problématique de la gestion centralisée des accès sans créer de couplage fort avec les autres services, grâce à l'émission de jetons stateless JWT. Lors de l'inscription ou de la connexion d'un client, le service vérifie les informations d'identification, attribue les rôles comme ROLE_CLIENT ou ROLE_ADMIN, et retourne un token signé. La base de données MySQL a été choisie pour garantir la rigueur relationnelle des rôles et l'intégrité des comptes. Ce token est ensuite validé au niveau de l'API Gateway pour sécuriser toutes les requêtes en aval. Mes endpoints principaux sont /api/auth/register et /api/auth/login. Je suis prêt pour vos questions techniques."*
 
 ---
 
@@ -56,9 +56,9 @@ Chaque étudiant dispose d'un microservice dédié, d'un périmètre précis de 
   - `GET /api/vehicles/{id}/availability` (Code 200 OK)
   - `POST /api/vehicles` (Code 201 Created, réservé Admin/Agent)
   - `PATCH /api/vehicles/{id}/status` (Code 200 OK)
-- **Base de données :** PostgreSQL (`vehicle_db`) – Tables `vehicles`, `categories`.
+- **Base de données :** MySQL (`vehicle_db`) – Tables `vehicles`, `categories`.
 - **Speech Oral (1 minute) :**
-  > *"Bonjour, je suis [Nom Étudiant 2], responsable du Vehicle-Service. Mon service gère l'ensemble du parc automobile de la plateforme. La problématique métier centrale est de fournir aux clients un catalogue précis, filtrable et à jour en temps réel. J'ai conçu des endpoints de recherche multicritère par marque, agence et catégorie. En matière de communication inter-services, mon service est interrogé de manière synchrone par le service de réservation via OpenFeign pour vérifier la disponibilité et le tarif journalier du véhicule demandé. De plus, il écoute de manière asynchrone les événements émis par RabbitMQ : dès qu'une réservation est confirmée, le statut du véhicule bascule automatiquement à RENTED. J'utilise PostgreSQL pour stocker les caractéristiques techniques de la flotte et assurer l'unicité des plaques d'immatriculation."*
+  > *"Bonjour, je suis [Nom Étudiant 2], responsable du Vehicle-Service. Mon service gère l'ensemble du parc automobile de la plateforme. La problématique métier centrale est de fournir aux clients un catalogue précis, filtrable et à jour en temps réel. J'ai conçu des endpoints de recherche multicritère par marque, agence et catégorie. En matière de communication inter-services, mon service est interrogé de manière synchrone par le service de réservation via OpenFeign pour vérifier la disponibilité et le tarif journalier du véhicule demandé. De plus, il écoute de manière asynchrone les événements émis par RabbitMQ : dès qu'une réservation est confirmée, le statut du véhicule bascule automatiquement à RENTED. J'utilise MySQL pour stocker les caractéristiques techniques de la flotte et assurer l'unicité des plaques d'immatriculation."*
 
 ---
 
@@ -76,9 +76,9 @@ Chaque étudiant dispose d'un microservice dédié, d'un périmètre précis de 
   - `GET /api/reservations/user/{userId}` (Code 200 OK)
   - `PUT /api/reservations/{id}/confirm` (Code 200 OK)
   - `PUT /api/reservations/{id}/cancel` (Code 200 OK)
-- **Base de données :** PostgreSQL (`reservation_db`) – Table `reservations`.
+- **Base de données :** MySQL (`reservation_db`) – Table `reservations`.
 - **Speech Oral (1 minute) :**
-  > *"Bonjour, je suis [Nom Étudiant 3] et je pilote le Reservation-Service, qui est le cœur fonctionnel de notre plateforme. Sa mission est d'orchestrer la réservation d'un véhicule de bout en bout. Lorsqu'un client soumet une demande avec des dates, mon service appelle d'abord Vehicle-Service en synchrone via OpenFeign pour s'assurer que le véhicule est libre et récupérer son tarif. Il calcule le montant total, enregistre la réservation avec le statut PENDING, puis sollicite immédiatement Payment-Service pour déclencher la simulation de paiement. Si le paiement réussit, la réservation passe à CONFIRMED et mon service publie un événement sur le broker RabbitMQ pour en informer les autres composants. PostgreSQL est indispensable ici pour respecter les contraintes d'intégrité ACID lors des transactions de réservation."*
+  > *"Bonjour, je suis [Nom Étudiant 3] et je pilote le Reservation-Service, qui est le cœur fonctionnel de notre plateforme. Sa mission est d'orchestrer la réservation d'un véhicule de bout en bout. Lorsqu'un client soumet une demande avec des dates, mon service appelle d'abord Vehicle-Service en synchrone via OpenFeign pour s'assurer que le véhicule est libre et récupérer son tarif. Il calcule le montant total, enregistre la réservation avec le statut PENDING, puis sollicite immédiatement Payment-Service pour déclencher la simulation de paiement. Si le paiement réussit, la réservation passe à CONFIRMED et mon service publie un événement sur le broker RabbitMQ pour en informer les autres composants. MySQL est indispensable ici pour respecter les contraintes d'intégrité ACID lors des transactions de réservation."*
 
 ---
 
@@ -94,9 +94,9 @@ Chaque étudiant dispose d'un microservice dédié, d'un périmètre précis de 
   - `GET /api/payments/{id}` (Code 200 OK)
   - `GET /api/payments/reservation/{reservationId}` (Code 200 OK)
   - `POST /api/payments/refund/{reservationId}` (Code 200 OK)
-- **Base de données :** PostgreSQL (`payment_db`) – Tables `payments`, `invoices`.
+- **Base de données :** MySQL (`payment_db`) – Tables `payments`, `invoices`.
 - **Speech Oral (1 minute) :**
-  > *"Bonjour, je suis [Nom Étudiant 4], en charge du Payment-Service. Ce service gère les transactions financières et la facturation. Conformément au cahier des charges, nous avons mis en place une simulation bancaire réaliste qui gère les statuts PENDING, PAID, FAILED et REFUNDED sans dépendre d'une passerelle bancaire externe lourde. Lorsque Reservation-Service envoie une requête de paiement, mon service génère un identifiant de transaction unique, valide le règlement et crée immédiatement une facture horodatée. Il prend également en charge le remboursement si le client annule sa location. J'ai choisi PostgreSQL pour garantir l'auditabilité et la cohérence stricte des montants et des factures."*
+  > *"Bonjour, je suis [Nom Étudiant 4], en charge du Payment-Service. Ce service gère les transactions financières et la facturation. Conformément au cahier des charges, nous avons mis en place une simulation bancaire réaliste qui gère les statuts PENDING, PAID, FAILED et REFUNDED sans dépendre d'une passerelle bancaire externe lourde. Lorsque Reservation-Service envoie une requête de paiement, mon service génère un identifiant de transaction unique, valide le règlement et crée immédiatement une facture horodatée. Il prend également en charge le remboursement si le client annule sa location. J'ai choisi MySQL pour garantir l'auditabilité et la cohérence stricte des montants et des factures."*
 
 ---
 
@@ -113,9 +113,9 @@ Chaque étudiant dispose d'un microservice dédié, d'un périmètre précis de 
   - `POST /api/agencies` (Code 201 Created)
   - `PUT /api/agencies/{id}` (Code 200 OK)
   - `DELETE /api/agencies/{id}` (Code 204 No Content)
-- **Base de données :** PostgreSQL (`agency_db`) – Tables `agencies`, `agency_staff`.
+- **Base de données :** MySQL (`agency_db`) – Tables `agencies`, `agency_staff`.
 - **Speech Oral (1 minute) :**
-  > *"Bonjour, je suis [Nom Étudiant 5] et je suis responsable de l'Agency-Service. Dans une plateforme de location, le lien physique est fondamental. Mon service permet aux clients d'identifier précisément les agences de départ et de retour selon la ville ou la zone géographique. Côté agence, il permet d'enregistrer les horaires d'ouverture, les coordonnées et les employés rattachés. Le service est découplé : un véhicule référence simplement un agencyId, ce qui évite les jointures inter-bases. La base PostgreSQL permet de gérer la structure d'adresses et garantit l'unicité du code d'agence. Mes endpoints permettent notamment la recherche rapide par ville via /api/agencies/city/{city}."*
+  > *"Bonjour, je suis [Nom Étudiant 5] et je suis responsable de l'Agency-Service. Dans une plateforme de location, le lien physique est fondamental. Mon service permet aux clients d'identifier précisément les agences de départ et de retour selon la ville ou la zone géographique. Côté agence, il permet d'enregistrer les horaires d'ouverture, les coordonnées et les employés rattachés. Le service est découplé : un véhicule référence simplement un agencyId, ce qui évite les jointures inter-bases. La base MySQL permet de gérer la structure d'adresses et garantit l'unicité du code d'agence. Mes endpoints permettent notamment la recherche rapide par ville via /api/agencies/city/{city}."*
 
 ---
 
@@ -130,9 +130,9 @@ Chaque étudiant dispose d'un microservice dédié, d'un périmètre précis de 
   - `GET /api/reviews/vehicle/{vehicleId}` (Code 200 OK)
   - `GET /api/reviews/agency/{agencyId}` (Code 200 OK)
   - `GET /api/reviews/user/{userId}` (Code 200 OK)
-- **Base de données :** MongoDB (`review_db`) – Collection `reviews`.
+- **Base de données :** MySQL (`review_db`) – Collection `reviews`.
 - **Speech Oral (1 minute) :**
-  > *"Bonjour, je suis [Nom Étudiant 6], responsable du Review-Service. Ce service gère les retours d'expérience clients. Contrairement aux services précédents, j'ai fait le choix architectural d'une base de données NoSQL MongoDB. Les avis clients présentent un schéma flexible avec des commentaires de longueur variable et un ciblage polymorphe, s'appliquant soit à un véhicule, soit à une agence. MongoDB offre d'excellentes performances en lecture pour charger instantanément les avis et calculer les notes moyennes sur les fiches produits. Le service permet aux clients d'attribuer une note de 1 à 5 avec un commentaire, et offre une modération simple pour rejeter les contenus non conformes."*
+  > *"Bonjour, je suis [Nom Étudiant 6], responsable du Review-Service. Mon service gère les retours d'expérience et la réputation sur CarRental. Il permet aux clients ayant loué un véhicule d'attribuer une note de 1 à 5 étoiles et de rédiger un commentaire sur un véhicule ou sur une agence. J'ai modélisé l'entité Review sous Spring Data JPA avec une base relationnelle MySQL 8.0 dédiée carrental_review_db. L'utilisation d'un index composite sur le type et l'identifiant de la cible assure un chargement ultra-rapide des avis et le calcul de la moyenne. Le service intègre également une modération simple (APPROVED, REJECTED) pour masquer les avis inappropriés."*
 
 ---
 

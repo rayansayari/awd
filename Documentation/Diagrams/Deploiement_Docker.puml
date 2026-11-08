@@ -35,12 +35,12 @@ node "Hôte Docker (Réseau: carrental-net)" {
     }
 
     node "Conteneurs Bases de Données (Volumes Persistants)" {
-        database "user-db (PostgreSQL)\nPort: 5432" as CD_User
-        database "vehicle-db (PostgreSQL)\nPort: 5433" as CD_Vehicle
-        database "reservation-db (PostgreSQL)\nPort: 5434" as CD_Res
-        database "payment-db (PostgreSQL)\nPort: 5435" as CD_Pay
-        database "agency-db (PostgreSQL)\nPort: 5436" as CD_Agency
-        database "review-db (MongoDB)\nPort: 27017" as CD_Review
+        database "user-db (MySQL)\nPort: 5432" as CD_User
+        database "vehicle-db (MySQL)\nPort: 5433" as CD_Vehicle
+        database "reservation-db (MySQL)\nPort: 5434" as CD_Res
+        database "payment-db (MySQL)\nPort: 5435" as CD_Pay
+        database "agency-db (MySQL)\nPort: 5436" as CD_Agency
+        database "review-db (MySQL)\nPort: 27017" as CD_Review
     }
 }
 
@@ -59,7 +59,7 @@ C_Vehicle --> CD_Vehicle : JDBC
 C_Res --> CD_Res : JDBC
 C_Pay --> CD_Pay : JDBC
 C_Agency --> CD_Agency : JDBC
-C_Review --> CD_Review : Mongo Driver
+C_Review --> CD_Review : JDBC
 
 C_Res ..> C_RabbitMQ : AMQP
 C_Pay ..> C_RabbitMQ : AMQP

@@ -74,9 +74,9 @@
 ---
 
 ### Diapositive 5 : Découpage Métier & Choix des Bases de Données
-- **Contenu :** Tableau des 6 services, ports, bases et responsabilités clés (5 PostgreSQL + 1 MongoDB).
+- **Contenu :** Tableau des 6 services, ports, bases et responsabilités clés (5 MySQL + 1 MySQL).
 - **Notes de discours (1 min) :**
-  > *"Ce tableau résume notre découpage métier équilibré entre les 6 membres de l'équipe. Pourquoi PostgreSQL pour 5 services ? Parce que ces domaines gèrent des entités relationnelles fortes exigeant la conformité ACID et l'intégrité référentielle, notamment pour les paiements, les immatriculations uniques et les contrats de réservation. Pourquoi MongoDB pour le Review-Service ? Les avis clients comportent des commentaires textuels de longueur variable et ciblent de façon polymorphe soit une agence, soit un véhicule. Le schéma NoSQL flexible de MongoDB et ses excellentes performances en lecture en font la solution idéale sans polluer nos bases relationnelles."*
+  > *"Ce tableau résume notre découpage métier équilibré entre les 6 membres de l'équipe. Pourquoi MySQL pour 5 services ? Parce que ces domaines gèrent des entités relationnelles fortes exigeant la conformité ACID et l'intégrité référentielle, notamment pour les paiements, les immatriculations uniques et les contrats de réservation. Pourquoi MySQL pour le Review-Service ? Les avis clients comportent des commentaires textuels de longueur variable et ciblent de façon polymorphe soit une agence, soit un véhicule. Le schéma Relationnel MySQL flexible de MySQL et ses excellentes performances en lecture en font la solution idéale sans polluer nos bases relationnelles."*
 
 ---
 
@@ -89,49 +89,49 @@
 
 ### Diapositive 7 : Partie Individuelle - 1. User-Service (Étudiant 1)
 - **Responsable :** `[Nom Étudiant 1]`
-- **Points clés :** Authentification stateless, JWT HMAC-SHA256, rôles, PostgreSQL `user_db:5432`, endpoints `/api/auth/register` et `/api/auth/login`.
+- **Points clés :** Authentification stateless, JWT HMAC-SHA256, rôles, MySQL `user_db:3306`, endpoints `/api/auth/register` et `/api/auth/login`.
 - **Notes de discours (1 min) :**
-  > *"Bonjour, je suis [Nom Étudiant 1], responsable du User-Service. Mon service est le garant de la sécurité et de la gestion des identités dans CarRental. Il résout la problématique de l'authentification centralisée sans couplage fort en émettant des tokens sans état JWT signés. Lors de l'inscription ou de la connexion, les mots de passe sont chiffrés, les rôles comme ROLE_CLIENT ou ROLE_ADMIN sont attribués, et un token est retourné au client. J'ai choisi PostgreSQL pour garantir la cohérence stricte des comptes et l'unicité des adresses email. Mes endpoints principaux sont /api/auth/register et /api/auth/login. L'API Gateway valide ce token et propage l'identité aux autres services via des headers HTTP internes. Je suis prêt pour vos questions."*
+  > *"Bonjour, je suis [Nom Étudiant 1], responsable du User-Service. Mon service est le garant de la sécurité et de la gestion des identités dans CarRental. Il résout la problématique de l'authentification centralisée sans couplage fort en émettant des tokens sans état JWT signés. Lors de l'inscription ou de la connexion, les mots de passe sont chiffrés, les rôles comme ROLE_CLIENT ou ROLE_ADMIN sont attribués, et un token est retourné au client. J'ai choisi MySQL pour garantir la cohérence stricte des comptes et l'unicité des adresses email. Mes endpoints principaux sont /api/auth/register et /api/auth/login. L'API Gateway valide ce token et propage l'identité aux autres services via des headers HTTP internes. Je suis prêt pour vos questions."*
 
 ---
 
 ### Diapositive 8 : Partie Individuelle - 2. Vehicle-Service (Étudiant 2)
 - **Responsable :** `[Nom Étudiant 2]`
-- **Points clés :** Parc automobile, catégories, disponibilités, PostgreSQL `vehicle_db:5433`, appels Feign et écoute RabbitMQ `reservation.confirmed`.
+- **Points clés :** Parc automobile, catégories, disponibilités, MySQL `vehicle_db:3306`, appels Feign et écoute RabbitMQ `reservation.confirmed`.
 - **Notes de discours (1 min) :**
-  > *"Bonjour, je suis [Nom Étudiant 2], responsable du Vehicle-Service. Mon microservice gère l'ensemble du parc automobile. La problématique est d'assurer un affichage réactif du catalogue avec un filtrage multicritère puissant par marque, agence et catégorie. J'ai conçu l'entité Vehicle avec un cycle d'état strict : AVAILABLE, RENTED, MAINTENANCE. En termes d'interactions, mon service est interrogé en synchrone par OpenFeign lors de la réservation pour confirmer le tarif journalier. De plus, il consomme de manière asynchrone l'événement RabbitMQ 'reservation.confirmed' pour passer le véhicule en RENTED sans impacter le temps de réponse de l'utilisateur. J'utilise PostgreSQL pour stocker les caractéristiques techniques et garantir l'unicité des plaques d'immatriculation."*
+  > *"Bonjour, je suis [Nom Étudiant 2], responsable du Vehicle-Service. Mon microservice gère l'ensemble du parc automobile. La problématique est d'assurer un affichage réactif du catalogue avec un filtrage multicritère puissant par marque, agence et catégorie. J'ai conçu l'entité Vehicle avec un cycle d'état strict : AVAILABLE, RENTED, MAINTENANCE. En termes d'interactions, mon service est interrogé en synchrone par OpenFeign lors de la réservation pour confirmer le tarif journalier. De plus, il consomme de manière asynchrone l'événement RabbitMQ 'reservation.confirmed' pour passer le véhicule en RENTED sans impacter le temps de réponse de l'utilisateur. J'utilise MySQL pour stocker les caractéristiques techniques et garantir l'unicité des plaques d'immatriculation."*
 
 ---
 
 ### Diapositive 9 : Partie Individuelle - 3. Reservation-Service (Étudiant 3)
 - **Responsable :** `[Nom Étudiant 3]`
-- **Points clés :** Orchestration de réservation, algorithme anti-surbooking, devis, statuts (PENDING, CONFIRMED, CANCELLED), PostgreSQL `reservation_db:5434`.
+- **Points clés :** Orchestration de réservation, algorithme anti-surbooking, devis, statuts (PENDING, CONFIRMED, CANCELLED), MySQL `reservation_db:3306`.
 - **Notes de discours (1 min) :**
-  > *"Bonjour, je suis [Nom Étudiant 3] et je pilote le Reservation-Service, le cœur névralgique de CarRental. Mon rôle est d'orchestrer la réservation. Lorsque le client valide ses dates, mon service calcule le nombre de jours, appelle Vehicle-Service via OpenFeign pour récupérer le prix journalier, enregistre la réservation avec le statut PENDING et déclenche le paiement en synchrone. Dès que le paiement réussit, la réservation passe à CONFIRMED et je publie un événement sur RabbitMQ. Pour éviter deux réservations simultanées pour le même véhicule, j'applique une requête de contrôle de chevauchement de dates et un verrouillage optimiste avec @Version. PostgreSQL est incontournable ici pour assurer la consistance transactionnelle ACID."*
+  > *"Bonjour, je suis [Nom Étudiant 3] et je pilote le Reservation-Service, le cœur névralgique de CarRental. Mon rôle est d'orchestrer la réservation. Lorsque le client valide ses dates, mon service calcule le nombre de jours, appelle Vehicle-Service via OpenFeign pour récupérer le prix journalier, enregistre la réservation avec le statut PENDING et déclenche le paiement en synchrone. Dès que le paiement réussit, la réservation passe à CONFIRMED et je publie un événement sur RabbitMQ. Pour éviter deux réservations simultanées pour le même véhicule, j'applique une requête de contrôle de chevauchement de dates et un verrouillage optimiste avec @Version. MySQL est incontournable ici pour assurer la consistance transactionnelle ACID."*
 
 ---
 
 ### Diapositive 10 : Partie Individuelle - 4. Payment-Service (Étudiant 4)
 - **Responsable :** `[Nom Étudiant 4]`
-- **Points clés :** Simulation bancaire (PAID, PENDING, FAILED, REFUNDED), facturation automatique `INV-XXXX`, PostgreSQL `payment_db:5435`.
+- **Points clés :** Simulation bancaire (PAID, PENDING, FAILED, REFUNDED), facturation automatique `INV-XXXX`, MySQL `payment_db:3306`.
 - **Notes de discours (1 min) :**
-  > *"Bonjour, je suis [Nom Étudiant 4], responsable du Payment-Service. Mon microservice prend en charge le traitement financier et la facturation. Comme demandé dans les consignes, nous avons développé une simulation bancaire complète gérant les états PAID, PENDING, FAILED et REFUNDED. Lorsque Reservation-Service soumet un paiement via OpenFeign, mon service valide la transaction, génère une référence unique de transaction TX-XXXX et produit immédiatement une facture numérotée INV-XXXX. En cas d'annulation de réservation par le client, mon service traite également le remboursement en passant le paiement en REFUNDED. La base PostgreSQL assure la traçabilité comptable et la rigueur financière."*
+  > *"Bonjour, je suis [Nom Étudiant 4], responsable du Payment-Service. Mon microservice prend en charge le traitement financier et la facturation. Comme demandé dans les consignes, nous avons développé une simulation bancaire complète gérant les états PAID, PENDING, FAILED et REFUNDED. Lorsque Reservation-Service soumet un paiement via OpenFeign, mon service valide la transaction, génère une référence unique de transaction TX-XXXX et produit immédiatement une facture numérotée INV-XXXX. En cas d'annulation de réservation par le client, mon service traite également le remboursement en passant le paiement en REFUNDED. La base MySQL assure la traçabilité comptable et la rigueur financière."*
 
 ---
 
 ### Diapositive 11 : Partie Individuelle - 5. Agency-Service (Étudiant 5)
 - **Responsable :** `[Nom Étudiant 5]`
-- **Points clés :** Points de retrait physiques, coordonnées, `Address` embarquée, horaires, PostgreSQL `agency_db:5436`.
+- **Points clés :** Points de retrait physiques, coordonnées, `Address` embarquée, horaires, MySQL `agency_db:3306`.
 - **Notes de discours (1 min) :**
-  > *"Bonjour, je suis [Nom Étudiant 5], responsable de l'Agency-Service. Dans la location de véhicules, l'ancrage territorial est indispensable. Mon service répertorie les agences physiques, leurs adresses complètes, leurs coordonnées et les employés rattachés. Sur le plan architectural, mon service garantit un découplage total : les autres microservices ne font aucune jointure sur mes tables, ils référencent seulement un agencyId. J'ai implémenté un composant d'adresses embarqué Address avec ville et code postal, et exposé des endpoints optimisés pour rechercher les agences par ville. PostgreSQL me permet d'assurer l'intégrité des agences et l'unicité de leur code d'identification."*
+  > *"Bonjour, je suis [Nom Étudiant 5], responsable de l'Agency-Service. Dans la location de véhicules, l'ancrage territorial est indispensable. Mon service répertorie les agences physiques, leurs adresses complètes, leurs coordonnées et les employés rattachés. Sur le plan architectural, mon service garantit un découplage total : les autres microservices ne font aucune jointure sur mes tables, ils référencent seulement un agencyId. J'ai implémenté un composant d'adresses embarqué Address avec ville et code postal, et exposé des endpoints optimisés pour rechercher les agences par ville. MySQL me permet d'assurer l'intégrité des agences et l'unicité de leur code d'identification."*
 
 ---
 
 ### Diapositive 12 : Partie Individuelle - 6. Review-Service (Étudiant 6)
 - **Responsable :** `[Nom Étudiant 6]`
-- **Points clés :** Avis clients, notes 1 à 5, commentaires polymorphes (véhicule ou agence), MongoDB NoSQL `review_db:27017`.
+- **Points clés :** Avis clients, notes 1 à 5, commentaires polymorphes (véhicule ou agence), MySQL Relationnel MySQL `review_db:3306`.
 - **Notes de discours (1 min) :**
-  > *"Bonjour, je suis [Nom Étudiant 6], responsable du Review-Service. Mon service apporte la preuve sociale sur CarRental en permettant aux clients d'évaluer les véhicules et les agences avec des notes de 1 à 5 et des commentaires. Contrairement à mes camarades, j'ai fait le choix délibéré d'une base NoSQL MongoDB. Pourquoi ? Parce que les avis sont des données semi-structurées de taille variable, avec un ciblage polymorphe, et qu'ils subissent une charge de lecture massive. MongoDB offre d'excellentes performances d'agrégation pour calculer les notes moyennes sans ralentir nos bases transactionnelles. Mon service intègre également une modération simple pour rejeter les avis inappropriés."*
+  > *"Bonjour, je suis [Nom Étudiant 6], responsable du Review-Service. Mon service apporte la preuve sociale sur CarRental en permettant aux clients d'évaluer les véhicules et les agences avec des notes de 1 à 5 et des commentaires. Contrairement à mes camarades, j'ai fait le choix délibéré d'une base Relationnel MySQL MySQL. Pourquoi ? Parce que les avis sont des données semi-structurées de taille variable, avec un ciblage polymorphe, et qu'ils subissent une charge de lecture massive. MySQL offre d'excellentes performances d'agrégation pour calculer les notes moyennes sans ralentir nos bases transactionnelles. Mon service intègre également une modération simple pour rejeter les avis inappropriés."*
 
 ---
 

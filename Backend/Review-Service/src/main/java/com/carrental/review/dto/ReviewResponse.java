@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class ReviewResponse {
-    private String id;
+    private Long id;
     private Long userId;
     private ReviewTargetType targetType;
     private Long targetId;

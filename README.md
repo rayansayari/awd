@@ -46,28 +46,28 @@ L'architecture repose sur **6 microservices métier** répartis équitablement e
       │             │             │             │             │             │
       ▼             ▼             ▼             ▼             ▼             ▼
   [(user_db)]  [(veh_db)]    [(res_db)]    [(pay_db)]    [(agn_db)]   [(rev_db)]
-   PostgreSQL   PostgreSQL    PostgreSQL    PostgreSQL    PostgreSQL     MongoDB
+   MySQL   MySQL    MySQL    MySQL    MySQL     MySQL
 ```
 
 ### 👥 Répartition des Microservices Métier
 
 | # | Microservice | Responsable | Port | Base de Données | Responsabilités Clés |
 |---|---|---|---|---|---|
-| **1** | **User-Service** | *Étudiant 1* | `8081` | PostgreSQL (`user_db`) | Inscription, Login, JWT, Gestion des comptes et rôles (`CLIENT`, `AGENT`, `ADMIN`) |
-| **2** | **Vehicle-Service** | *Étudiant 2* | `8082` | PostgreSQL (`vehicle_db`) | Flotte, catégories, tarifs, filtrage multicritère, statut et disponibilité |
-| **3** | **Reservation-Service** | *Étudiant 3* | `8083` | PostgreSQL (`reservation_db`) | Création, calcul de devis, cycle de vie des réservations, coordination inter-services |
-| **4** | **Payment-Service** | *Étudiant 4* | `8084` | PostgreSQL (`payment_db`) | Simulation de transaction bancaire, factures, statuts `PENDING`, `PAID`, `REFUNDED` |
-| **5** | **Agency-Service** | *Étudiant 5* | `8085` | PostgreSQL (`agency_db`) | Agences physiques, géolocalisation/adresses, horaires, affectation du personnel |
-| **6** | **Review-Service** | *Étudiant 6* | `8086` | MongoDB (`review_db`) | Avis clients, notes (1 à 5), commentaires, modération |
+| **1** | **User-Service** | *Étudiant 1* | `8081` | MySQL (`user_db`) | Inscription, Login, JWT, Gestion des comptes et rôles (`CLIENT`, `AGENT`, `ADMIN`) |
+| **2** | **Vehicle-Service** | *Étudiant 2* | `8082` | MySQL (`vehicle_db`) | Flotte, catégories, tarifs, filtrage multicritère, statut et disponibilité |
+| **3** | **Reservation-Service** | *Étudiant 3* | `8083` | MySQL (`reservation_db`) | Création, calcul de devis, cycle de vie des réservations, coordination inter-services |
+| **4** | **Payment-Service** | *Étudiant 4* | `8084` | MySQL (`payment_db`) | Simulation de transaction bancaire, factures, statuts `PENDING`, `PAID`, `REFUNDED` |
+| **5** | **Agency-Service** | *Étudiant 5* | `8085` | MySQL (`agency_db`) | Agences physiques, géolocalisation/adresses, horaires, affectation du personnel |
+| **6** | **Review-Service** | *Étudiant 6* | `8086` | MySQL (`review_db`) | Avis clients, notes (1 à 5), commentaires, modération |
 | **★** | **API Gateway + Discovery** | *Collectif* | `8080` / `8761` | - | Point d'entrée unique, registre Eureka, bus RabbitMQ, sécurité partagée |
 
 ---
 
 ## 🛠️ 3. Technologies Utilisées
 
-- **Backend :** Java 17, Spring Boot 3.2+, Spring Cloud 2023 (Gateway, Eureka Discovery, OpenFeign), Spring Data JPA, Spring Data MongoDB.
+- **Backend :** Java 17, Spring Boot 3.2+, Spring Cloud 2023 (Gateway, Eureka Discovery, OpenFeign), Spring Data JPA, Spring Data MySQL.
 - **Frontend :** Angular 17+, TypeScript, HTML5 / SCSS, Bootstrap 5, RxJS.
-- **Bases de données :** PostgreSQL 15 (ACID relationnel pour transactions), MongoDB 6 (NoSQL flexible pour les avis).
+- **Bases de données :** MySQL 8.0 (ACID relationnel pour transactions), MySQL 6 (Relationnel MySQL flexible pour les avis).
 - **Communication Inter-services :**
   - **Synchrone :** REST / Spring Cloud OpenFeign (pour les vérifications de disponibilité et l'initialisation de paiement en temps réel).
   - **Asynchrone :** RabbitMQ (AMQP) (pour la publication d'événements : `reservation.confirmed`, `payment.completed`, `vehicle.status.updated`).

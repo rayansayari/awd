@@ -22,7 +22,7 @@ Séance 3-4: Conception & Validation Intermédiaire (JALON ACTUEL - SÉANCE 4)
 
 Séance 5: Implémentation Avancée & Données
   ├── Implémentation complète de la couche Service & DAO
-  ├── Mise en place des bases de données PostgreSQL & MongoDB avec Docker
+  ├── Mise en place des bases de données MySQL & MySQL avec Docker
   └── Intégration de Spring Cloud Eureka & Gateway
 
 Séance 6: Communication Inter-Services & Sécurité
@@ -50,7 +50,7 @@ Séance 8: Finalisation & Rendu Définitif
 | Diagrammes UML & Contrats d'API | | 🟩 | | | | |
 | Squelette des 6 Services & Gateway | | 🟩 | | | | |
 | Validation Intermédiaire (Séance 4) | | 🎯 | | | | |
-| Persistance & Migrations SQL/NoSQL | | | 🟦 | | | |
+| Persistance & Migrations SQL/Relationnel MySQL | | | 🟦 | | | |
 | Communication Feign & RabbitMQ | | | | 🟦 | | |
 | Authentification JWT & Sécurité | | | | 🟦 | | |
 | Développement UI Angular | | | | 🟦 | 🟦 | |

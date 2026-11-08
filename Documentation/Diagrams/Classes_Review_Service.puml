@@ -16,7 +16,7 @@ package "com.carrental.review.domain" {
     }
 
     class Review {
-        - id: String
+        - id: Long
         - userId: Long
         - targetType: ReviewTargetType
         - targetId: Long
@@ -41,7 +41,7 @@ package "com.carrental.review.dto" {
     }
 
     class ReviewResponse {
-        + id: String
+        + id: Long
         + userId: Long
         + targetType: ReviewTargetType
         + targetId: Long
@@ -73,8 +73,8 @@ package "com.carrental.review.service" {
         + getReviewsByTarget(type: ReviewTargetType, targetId: Long): List<ReviewResponse>
         + getRatingSummary(type: ReviewTargetType, targetId: Long): RatingSummaryDTO
         + getReviewsByUser(userId: Long): List<ReviewResponse>
-        + moderateReview(id: String, status: ModerationStatus): ReviewResponse
-        + deleteReview(id: String): void
+        + moderateReview(id: Long, status: ModerationStatus): ReviewResponse
+        + deleteReview(id: Long): void
     }
 }
 
@@ -85,7 +85,7 @@ package "com.carrental.review.controller" {
         + getByVehicle(vehicleId: Long): ResponseEntity<List<ReviewResponse>>
         + getByAgency(agencyId: Long): ResponseEntity<List<ReviewResponse>>
         + getSummary(type: ReviewTargetType, targetId: Long): ResponseEntity<RatingSummaryDTO>
-        + moderate(id: String, status: ModerationStatus): ResponseEntity<ReviewResponse>
+        + moderate(id: Long, status: ModerationStatus): ResponseEntity<ReviewResponse>
     }
 }
 

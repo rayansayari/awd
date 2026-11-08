@@ -30,12 +30,12 @@ graph TB
     end
 
     subgraph DATABASES["Bases de Données (Database-per-Service)"]
-        DB_USER[("user_db (PostgreSQL)")]
-        DB_VEHICLE[("vehicle_db (PostgreSQL)")]
-        DB_RES[("reservation_db (PostgreSQL)")]
-        DB_PAY[("payment_db (PostgreSQL)")]
-        DB_AGENCY[("agency_db (PostgreSQL)")]
-        DB_REVIEW[("review_db (MongoDB)")]
+        DB_USER[("user_db (MySQL)")]
+        DB_VEHICLE[("vehicle_db (MySQL)")]
+        DB_RES[("reservation_db (MySQL)")]
+        DB_PAY[("payment_db (MySQL)")]
+        DB_AGENCY[("agency_db (MySQL)")]
+        DB_REVIEW[("review_db (MySQL)")]
     end
 
     ANGULAR -->|HTTP / REST| GATEWAY
@@ -404,12 +404,12 @@ graph TB
         AGN_S["Agency Service :8085"]
         REV_S["Review Service :8086"]
 
-        DB1[("PostgreSQL user_db :5432")]
-        DB2[("PostgreSQL vehicle_db :5433")]
-        DB3[("PostgreSQL res_db :5434")]
-        DB4[("PostgreSQL pay_db :5435")]
-        DB5[("PostgreSQL agency_db :5436")]
-        DB6[("MongoDB review_db :27017")]
+        DB1[("MySQL user_db :5432")]
+        DB2[("MySQL vehicle_db :5433")]
+        DB3[("MySQL res_db :5434")]
+        DB4[("MySQL pay_db :5435")]
+        DB5[("MySQL agency_db :5436")]
+        DB6[("MySQL review_db :27017")]
     end
 
     NGINX --> GATEWAY

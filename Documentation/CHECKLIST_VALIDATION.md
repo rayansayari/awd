@@ -31,7 +31,7 @@ Cette grille de contrôle vérifie point par point la stricte conformité des li
 | Principales fonctionnalités décrites | [x] Terminé | Slide 5 (Recherche, Réservation, Simulation paiement, Agences, Avis) |
 | Architecture globale proposée (diagramme, Gateway, sécurité, etc.) | [x] Terminé | Slide 6 (Diagramme inséré, Gateway 8080, Eureka 8761, RabbitMQ 5672) |
 | Microservices, responsabilités et bases de données | [x] Terminé | Slide 7 (Tableau récapitulatif des 6 services + Database-per-service) |
-| Technologies choisies et justification | [x] Terminé | Slide 8 (Java 17, Spring Boot 3, Angular 17, PostgreSQL, MongoDB) |
+| Technologies choisies et justification | [x] Terminé | Slide 8 (Java 17, Spring Boot 3, Angular 17, MySQL, MySQL) |
 | Communications entre services (synchrone vs asynchrone) | [x] Terminé | Slide 9 (OpenFeign synchrone vs RabbitMQ events asynchrones) |
 | **Partie individuelle : 1 min de speech par étudiant sur son service** | [x] Terminé | Slides 10 à 15 dédiées avec notes de discours minutées |
 | Conception de chaque microservice (diagramme de classes) | [x] Terminé | Intégrée dans les fiches individuelles et le document technique |

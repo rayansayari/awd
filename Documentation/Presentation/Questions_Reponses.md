@@ -11,7 +11,7 @@ Ce document prépare l'équipe de 6 étudiants à la session de discussion techn
 1. **Découplage organisationnel :** Dans une équipe de 6 étudiants, chaque membre peut développer, tester, déployer et faire évoluer son propre service de façon totalement autonome, sans risque de conflits de merge permanents sur un monolithe partagé.
 2. **Scalabilité ciblée :** Le service de consultation des véhicules subit une charge de lecture beaucoup plus intense que le service de paiement. En microservices, nous pouvons répliquer uniquement l'instance `Vehicle-Service` sans dupliquer tout le système.
 3. **Résilience et isolation des pannes :** Une défaillance dans le module des avis clients (`Review-Service`) n'empêche absolument pas un utilisateur de rechercher un véhicule et de finaliser sa réservation.
-4. **Polyglot persistence :** Possibilité d'adapter la base de données au besoin métier : PostgreSQL (relationnel ACID) pour les transactions et réservations, et MongoDB (orienté document flexible) pour les avis.
+4. **Polyglot persistence :** Possibilité d'adapter la base de données au besoin métier : MySQL (relationnel ACID) pour les transactions et réservations, et MySQL (orienté document flexible) pour les avis.
 
 ---
 
@@ -39,10 +39,12 @@ Le pattern Database-per-Service garantit le **découplage strict** des microserv
 
 ---
 
-### Q5. Pourquoi utiliser PostgreSQL pour la majorité des services et MongoDB pour le Review-Service ?
+### Q5. Pourquoi avoir choisi MySQL 8.0 pour l'ensemble des 6 microservices ?
 **Réponse :**
-- **PostgreSQL** est idéal pour `User-Service`, `Vehicle-Service`, `Reservation-Service`, `Payment-Service` et `Agency-Service` car ces domaines nécessitent une stricte conformité **ACID**, des contraintes relationnelles fortes (clés primaires, unicité des emails ou immatriculations) et une intégrité transactionnelle rigoureuse.
-- **MongoDB** a été choisi pour le `Review-Service` car les avis clients ont une structure semi-structurée (notes, commentaires libres, métadonnées variables) et s'appliquent de manière polymorphe soit à des véhicules, soit à des agences. Le modèle orienté document offre d'excellentes performances en lecture pour charger les listes d'avis et calculer dynamiquement des moyennes.
+1. **Conformité transactionnelle ACID & Moteur InnoDB :** Tous les microservices (utilisateurs, véhicules, réservations, paiements, agences et avis) bénéficient de la robustesse du moteur InnoDB, garantissant des transactions atomiques, la gestion des verrous et une intégrité référentielle stricte.
+2. **Standard industriel éprouvé & Homogénéité opérationnelle :** Utiliser MySQL 8.0 sur l'ensemble des services unifie la pile technologique : une seule compétence technique requise pour toute l'équipe de 6 étudiants, mêmes outils d'administration (phpMyAdmin disponible sur le port 8088, MySQL Workbench) et même connecteur JDBC officiel (mysql-connector-j).
+3. **Gestion optimisée des avis sous MySQL :** L'entité Review utilise des colonnes typées avec index composite sur (targetType, targetId), assurant des temps de réponse instantanés en millisecondes pour charger les avis par véhicule ou par agence.
+4. **Support d'encodage moderne :** Le jeu de caractères utf8mb4 supporte nativement tous les caractères internationaux et émojis dans les commentaires clients.
 
 ---
 
@@ -99,7 +101,7 @@ Spring Cloud OpenFeign est un client REST déclaratif. Au lieu d'écrire du code
 
 ### Q12. Qu'est-ce que Docker Compose apporte dans votre architecture ?
 **Réponse :**
-Notre architecture compte plus de 10 composants (6 microservices métier, API Gateway, Eureka, RabbitMQ, 5 bases PostgreSQL et 1 base MongoDB). Docker Compose nous permet de décrire l'intégralité de cet écosystème dans un unique fichier `docker-compose.yml` et de démarrer toute la plateforme en une seule commande (`docker-compose up -d`) sur un réseau virtuel privé partagé (`carrental-network`), avec des volumes persistants pour chaque base de données.
+Notre architecture compte plus de 10 composants (6 microservices métier, API Gateway, Eureka, RabbitMQ, 5 bases MySQL et 1 base MySQL). Docker Compose nous permet de décrire l'intégralité de cet écosystème dans un unique fichier `docker-compose.yml` et de démarrer toute la plateforme en une seule commande (`docker-compose up -d`) sur un réseau virtuel privé partagé (`carrental-network`), avec des volumes persistants pour chaque base de données.
 
 ---
 
@@ -185,7 +187,7 @@ Grâce au filtre d'autorisation :
 Les avis et notations ont un cycle de vie, des exigences de performance et un modèle de données totalement différents du cœur transactionnel :
 - La volumétrie des avis peut croître très rapidement.
 - Les requêtes sont presque exclusivement des lectures massives en consultation publique.
-- En isolant ce service avec MongoDB, une lenteur ou une indisponibilité temporaire du module d'avis n'a aucun impact sur la capacité d'un client à louer une voiture et payer sa commande.
+- En isolant ce service avec MySQL, une lenteur ou une indisponibilité temporaire du module d'avis n'a aucun impact sur la capacité d'un client à louer une voiture et payer sa commande.
 
 ---
 

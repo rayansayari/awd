@@ -246,7 +246,7 @@ points_s4 = [
     "Eureka Server (8761) : Découverte dynamique de services.",
     "RabbitMQ (5672) : Bus d'événements asynchrones.",
     "6 Microservices Métier : Spring Boot 3.2+ totalement découplés.",
-    "Database-per-Service : 5 instances PostgreSQL + 1 MongoDB."
+    "Database-per-Service : 6 instances isolées MySQL 8.0."
 ]
 for pt in points_s4:
     p = tf_s4.add_paragraph()
@@ -281,12 +281,12 @@ table = table_shape.table
 
 headers = ["Microservice", "Port", "Base de Données", "Responsabilité Clé & Bounded Context"]
 data = [
-    ["1. User-Service", "8081", "PostgreSQL (user_db)", "Comptes, Inscription, Login, JWT, Rôles (CLIENT, AGENT, ADMIN)"],
-    ["2. Vehicle-Service", "8082", "PostgreSQL (vehicle_db)", "Catalogue, Fiches véhicules, Catégories, Tarifs, Disponibilités"],
-    ["3. Reservation-Service", "8083", "PostgreSQL (reservation_db)", "Dates, Devis, Cycle de vie (PENDING, CONFIRMED, CANCELLED)"],
-    ["4. Payment-Service", "8084", "PostgreSQL (payment_db)", "Simulation paiement (PAID, FAILED), Factures PDF, Remboursements"],
-    ["5. Agency-Service", "8085", "PostgreSQL (agency_db)", "Agences physiques, Adresses géographiques, Horaires, Personnel"],
-    ["6. Review-Service", "8086", "MongoDB (review_db)", "Avis clients, Notes (1-5), Commentaires polymorphes, Modération"]
+    ["1. User-Service", "8081", "MySQL (user_db)", "Comptes, Inscription, Login, JWT, Rôles (CLIENT, AGENT, ADMIN)"],
+    ["2. Vehicle-Service", "8082", "MySQL (vehicle_db)", "Catalogue, Fiches véhicules, Catégories, Tarifs, Disponibilités"],
+    ["3. Reservation-Service", "8083", "MySQL (reservation_db)", "Dates, Devis, Cycle de vie (PENDING, CONFIRMED, CANCELLED)"],
+    ["4. Payment-Service", "8084", "MySQL (payment_db)", "Simulation paiement (PAID, FAILED), Factures PDF, Remboursements"],
+    ["5. Agency-Service", "8085", "MySQL (agency_db)", "Agences physiques, Adresses géographiques, Horaires, Personnel"],
+    ["6. Review-Service", "8086", "MySQL (review_db)", "Avis clients, Notes (1-5), Commentaires polymorphes, Modération"]
 ]
 
 col_widths = [Inches(2.5), Inches(1.0), Inches(2.8), Inches(5.4)]
@@ -315,8 +315,8 @@ for i, row_data in enumerate(data):
 
 add_notes(s5, """SPEECH (1 minute - Membre collectif) :
 "Ce tableau résume notre découpage métier équilibré entre les 6 membres de l'équipe. 
-Pourquoi PostgreSQL pour 5 services ? Parce que ces domaines gèrent des entités relationnelles fortes exigeant la conformité ACID et l'intégrité référentielle, notamment pour les paiements, les immatriculations uniques et les contrats de réservation.
-Pourquoi MongoDB pour le Review-Service ? Les avis clients comportent des commentaires textuels de longueur variable et ciblent de façon polymorphe soit une agence, soit un véhicule. Le schéma NoSQL flexible de MongoDB et ses excellentes performances en lecture en font la solution idéale sans polluer nos bases relationnelles." """)
+Pourquoi MySQL pour 5 services ? Parce que ces domaines gèrent des entités relationnelles fortes exigeant la conformité ACID et l'intégrité référentielle, notamment pour les paiements, les immatriculations uniques et les contrats de réservation.
+Pourquoi MySQL pour le Review-Service ? Les avis clients comportent des commentaires textuels de longueur variable et ciblent de façon polymorphe soit une agence, soit un véhicule. Le schéma Relationnel MySQL flexible de MySQL et ses excellentes performances en lecture en font la solution idéale sans polluer nos bases relationnelles." """)
 
 # =========================================================================
 # SLIDE 6 : COMMUNICATION INTER-SERVICES
@@ -382,7 +382,7 @@ p.font.color.rgb = C_PRIMARY
 
 items_u = [
     ("Problématique & Rôle :", "Gérer de manière centralisée les identités, sécuriser l'accès et attribuer les autorisations (CLIENT, AGENT, ADMIN)."),
-    ("Base de Données :", "PostgreSQL (user_db:5432) – Tables 'users', 'roles', 'user_roles' avec intégrité relationnelle et unicité des emails."),
+    ("Base de Données :", "MySQL (user_db:5432) – Tables 'users', 'roles', 'user_roles' avec intégrité relationnelle et unicité des emails."),
     ("Sécurité JWT :", "Émission de jetons signés HMAC-SHA256 contenant userId, email et rôles. Vérification rapide sans réinterroger la DB."),
     ("Contrats d'API Clés :", "POST /api/auth/register (201 Created), POST /api/auth/login (200 OK + Token), GET /api/auth/validate, GET /api/users/{id}."),
     ("Gestion des Erreurs :", "GlobalExceptionHandler renvoyant des réponses RFC 7807 (400 Bad Request, 401 Unauthorized, 409 Conflict).")
@@ -404,7 +404,7 @@ add_notes(s7, """SPEECH ÉTUDIANT 1 (1 minute chrono) :
 Mon service est le garant de la sécurité et de la gestion des identités dans CarRental. 
 Il résout la problématique de l'authentification centralisée sans couplage fort en émettant des tokens sans état JWT signés. 
 Lors de l'inscription ou de la connexion, les mots de passe sont chiffrés, les rôles comme ROLE_CLIENT ou ROLE_ADMIN sont attribués, et un token est retourné au client. 
-J'ai choisi PostgreSQL pour garantir la cohérence stricte des comptes et l'unicité des adresses email. 
+J'ai choisi MySQL pour garantir la cohérence stricte des comptes et l'unicité des adresses email. 
 Mes endpoints principaux sont /api/auth/register et /api/auth/login. L'API Gateway valide ce token et propage l'identité aux autres services via des headers HTTP internes. 
 Je suis prêt pour vos questions." """)
 
@@ -429,7 +429,7 @@ p.font.color.rgb = RGBColor(39, 103, 73)
 
 items_v = [
     ("Problématique & Rôle :", "Fournir un catalogue précis, filtrable et à jour en temps réel des véhicules disponibles sur l'ensemble des agences."),
-    ("Base de Données :", "PostgreSQL (vehicle_db:5433) – Tables 'vehicles', 'categories' avec indexation sur les marques, modèles et agences."),
+    ("Base de Données :", "MySQL (vehicle_db:5433) – Tables 'vehicles', 'categories' avec indexation sur les marques, modèles et agences."),
     ("Entités & Statuts :", "Vehicle (marque, modèle, tarif/jour, km, statut: AVAILABLE, RENTED, MAINTENANCE, OUT_OF_SERVICE) et Category (SUV, Berline, Eco)."),
     ("Communication Synchrone :", "Appelé par Reservation-Service via OpenFeign pour vérifier instantanément le tarif et la disponibilité."),
     ("Communication Asynchrone :", "Écoute RabbitMQ sur l'événement 'reservation.confirmed' pour basculer automatiquement le véhicule à l'état RENTED."),
@@ -453,7 +453,7 @@ Mon microservice gère l'ensemble du parc automobile. La problématique est d'as
 J'ai conçu l'entité Vehicle avec un cycle d'état strict : AVAILABLE, RENTED, MAINTENANCE. 
 En termes d'interactions, mon service est interrogé en synchrone par OpenFeign lors de la réservation pour confirmer le tarif journalier. 
 De plus, il consomme de manière asynchrone l'événement RabbitMQ 'reservation.confirmed' pour passer le véhicule en RENTED sans impacter le temps de réponse de l'utilisateur. 
-J'utilise PostgreSQL pour stocker les caractéristiques techniques et garantir l'unicité des plaques d'immatriculation." """)
+J'utilise MySQL pour stocker les caractéristiques techniques et garantir l'unicité des plaques d'immatriculation." """)
 
 # Slide 9 : Étudiant 3 - Reservation Service
 s9 = prs.slides.add_slide(blank_layout)
@@ -476,7 +476,7 @@ p.font.color.rgb = RGBColor(123, 52, 30)
 
 items_r = [
     ("Problématique & Rôle :", "Orchestrer le cycle de location de bout en bout, calculer le montant exact et empêcher tout surbooking."),
-    ("Base de Données :", "PostgreSQL (reservation_db:5434) – Table 'reservations' avec contraintes ACID et index temporels (startDate, endDate)."),
+    ("Base de Données :", "MySQL (reservation_db:5434) – Table 'reservations' avec contraintes ACID et index temporels (startDate, endDate)."),
     ("Algorithme Anti-Surbooking :", "Contrôle d'intersection de dates via JPQL combiné à un verrouillage optimiste (@Version) évitant les collisions concurrentes."),
     ("Orchestration Métier :", "1. Appel Feign vers Vehicle-Service (tarif) -> 2. Création PENDING -> 3. Appel Feign vers Payment-Service (PAID) -> 4. CONFIRMED."),
     ("Publication Asynchrone :", "Émet 'reservation.confirmed' et 'reservation.cancelled' sur le Topic Exchange RabbitMQ."),
@@ -499,7 +499,7 @@ add_notes(s9, """SPEECH ÉTUDIANT 3 (1 minute chrono) :
 Mon rôle est d'orchestrer la réservation. Lorsque le client valide ses dates, mon service calcule le nombre de jours, appelle Vehicle-Service via OpenFeign pour récupérer le prix journalier, enregistre la réservation avec le statut PENDING et déclenche le paiement en synchrone. 
 Dès que le paiement réussit, la réservation passe à CONFIRMED et je publie un événement sur RabbitMQ. 
 Pour éviter deux réservations simultanées pour le même véhicule, j'applique une requête de contrôle de chevauchement de dates et un verrouillage optimiste avec @Version. 
-PostgreSQL est incontournable ici pour assurer la consistance transactionnelle ACID." """)
+MySQL est incontournable ici pour assurer la consistance transactionnelle ACID." """)
 
 # Slide 10 : Étudiant 4 - Payment Service
 s10 = prs.slides.add_slide(blank_layout)
@@ -522,7 +522,7 @@ p.font.color.rgb = RGBColor(107, 70, 193)
 
 items_p = [
     ("Problématique & Rôle :", "Assurer les transactions financières et la facturation sans dépendance bancaire externe lourde."),
-    ("Base de Données :", "PostgreSQL (payment_db:5435) – Tables 'payments' et 'invoices' avec relations 1-à-1 et auditabilité stricte."),
+    ("Base de Données :", "MySQL (payment_db:5435) – Tables 'payments' et 'invoices' avec relations 1-à-1 et auditabilité stricte."),
     ("Simulation Bancaire :", "Moteur réaliste simulant les statuts PAID (succès), PENDING (en attente), FAILED (refus) et REFUNDED (remboursement)."),
     ("Génération de Facture :", "Création automatique d'une référence unique (INV-XXXX) avec horodatage et montant TTC dès validation du paiement."),
     ("Gestion des Remboursements :", "Endpoint dédié POST /api/payments/refund/{resId} déclenché lors d'une annulation de réservation."),
@@ -546,7 +546,7 @@ Mon microservice prend en charge le traitement financier et la facturation.
 Comme demandé dans les consignes, nous avons développé une simulation bancaire complète gérant les états PAID, PENDING, FAILED et REFUNDED. 
 Lorsque Reservation-Service soumet un paiement via OpenFeign, mon service valide la transaction, génère une référence unique de transaction TX-XXXX et produit immédiatement une facture numérotée INV-XXXX. 
 En cas d'annulation de réservation par le client, mon service traite également le remboursement en passant le paiement en REFUNDED. 
-La base PostgreSQL assure la traçabilité comptable et la rigueur financière." """)
+La base MySQL assure la traçabilité comptable et la rigueur financière." """)
 
 # Slide 11 : Étudiant 5 - Agency Service
 s11 = prs.slides.add_slide(blank_layout)
@@ -569,7 +569,7 @@ p.font.color.rgb = RGBColor(40, 94, 97)
 
 items_a = [
     ("Problématique & Rôle :", "Gérer le réseau physique des agences de location, les adresses de retrait/restitution et le personnel affecté."),
-    ("Base de Données :", "PostgreSQL (agency_db:5436) – Tables 'agencies', 'agency_staff' avec objet valeur Address embarqué (@Embedded)."),
+    ("Base de Données :", "MySQL (agency_db:5436) – Tables 'agencies', 'agency_staff' avec objet valeur Address embarqué (@Embedded)."),
     ("Découplage Réseau :", "Les véhicules et réservations stockent uniquement un identifiant 'agencyId', évitant tout couplage SQL inter-services."),
     ("Recherche Géographique :", "Recherche simplifiée par ville via l'endpoint dédié /api/agencies/city/{city} pour orienter le client."),
     ("Gestion des Horaires :", "Stockage des plages d'ouverture pour valider la faisabilité de prise en charge d'un véhicule."),
@@ -592,7 +592,7 @@ add_notes(s11, """SPEECH ÉTUDIANT 5 (1 minute chrono) :
 Dans la location de véhicules, l'ancrage territorial est indispensable. Mon service répertorie les agences physiques, leurs adresses complètes, leurs coordonnées et les employés rattachés. 
 Sur le plan architectural, mon service garantit un découplage total : les autres microservices ne font aucune jointure sur mes tables, ils référencent seulement un agencyId. 
 J'ai implémenté un composant d'adresses embarqué Address avec ville et code postal, et exposé des endpoints optimisés pour rechercher les agences par ville. 
-PostgreSQL me permet d'assurer l'intégrité des agences et l'unicité de leur code d'identification." """)
+MySQL me permet d'assurer l'intégrité des agences et l'unicité de leur code d'identification." """)
 
 # Slide 12 : Étudiant 6 - Review Service
 s12 = prs.slides.add_slide(blank_layout)
@@ -608,14 +608,14 @@ tf_rv = tb_rv.text_frame
 tf_rv.word_wrap = True
 
 p = tf_rv.paragraphs[0]
-p.text = "Review-Service • Avis Clients, Notations & Modération NoSQL"
+p.text = "Review-Service • Avis Clients, Notations & Modération Relationnel MySQL"
 p.font.size = Pt(18)
 p.font.bold = True
 p.font.color.rgb = RGBColor(116, 66, 16)
 
 items_rv = [
     ("Problématique & Rôle :", "Collecter et diffuser les avis clients (notes de 1 à 5 et commentaires) avec une performance maximale en lecture."),
-    ("Base de Données NoSQL :", "MongoDB (review_db:27017) – Justifié par un schéma flexible semi-structuré et des requêtes de consultation très fréquentes."),
+    ("Base de Données Relationnel MySQL :", "MySQL (review_db:27017) – Justifié par un schéma flexible semi-structuré et des requêtes de consultation très fréquentes."),
     ("Ciblage Polymorphe :", "L'avis s'applique de façon flexible soit à un véhicule (targetType: VEHICLE), soit à une agence (targetType: AGENCY)."),
     ("Modération des Avis :", "Gestion des états PENDING, APPROVED, REJECTED. Seuls les avis approuvés sont visibles sur le catalogue public."),
     ("Calcul des Moyennes :", "Agrégation dynamique des notes pour calculer la moyenne affichée sur la fiche descriptive du véhicule."),
@@ -636,8 +636,8 @@ for title, desc in items_rv:
 add_notes(s12, """SPEECH ÉTUDIANT 6 (1 minute chrono) :
 "Bonjour, je suis [Nom Étudiant 6], responsable du Review-Service. 
 Mon service apporte la preuve sociale sur CarRental en permettant aux clients d'évaluer les véhicules et les agences avec des notes de 1 à 5 et des commentaires. 
-Contrairement à mes camarades, j'ai fait le choix délibéré d'une base NoSQL MongoDB. 
-Pourquoi ? Parce que les avis sont des données semi-structurées de taille variable, avec un ciblage polymorphe, et qu'ils subissent une charge de lecture massive. MongoDB offre d'excellentes performances d'agrégation pour calculer les notes moyennes sans ralentir nos bases transactionnelles. 
+Contrairement à mes camarades, j'ai fait le choix délibéré d'une base Relationnel MySQL MySQL. 
+Pourquoi ? Parce que les avis sont des données semi-structurées de taille variable, avec un ciblage polymorphe, et qu'ils subissent une charge de lecture massive. MySQL offre d'excellentes performances d'agrégation pour calculer les notes moyennes sans ralentir nos bases transactionnelles. 
 Mon service intègre également une modération simple pour rejeter les avis inappropriés." """)
 
 # =========================================================================

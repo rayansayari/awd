@@ -19,12 +19,12 @@ graph TB
     end
 
     subgraph DATABASES["Bases de Données Découplées (Database-per-Service)"]
-        DB_USER[("PostgreSQL<br/>user_db:5432")]
-        DB_VEHICLE[("PostgreSQL<br/>vehicle_db:5433")]
-        DB_RES[("PostgreSQL<br/>reservation_db:5434")]
-        DB_PAY[("PostgreSQL<br/>payment_db:5435")]
-        DB_AGENCY[("PostgreSQL<br/>agency_db:5436")]
-        DB_REVIEW[("MongoDB<br/>review_db:27017")]
+        DB_USER[("MySQL<br/>user_db:3306")]
+        DB_VEHICLE[("MySQL<br/>vehicle_db:3306")]
+        DB_RES[("MySQL<br/>reservation_db:3306")]
+        DB_PAY[("MySQL<br/>payment_db:3306")]
+        DB_AGENCY[("MySQL<br/>agency_db:3306")]
+        DB_REVIEW[("MySQL<br/>review_db:3306")]
     end
 
     ANGULAR -->|HTTP / HTTPS REST| GATEWAY

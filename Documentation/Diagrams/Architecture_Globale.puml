@@ -26,12 +26,12 @@ package "Microservices Métier (Spring Boot 3.2)" {
     component [Review Service\n(Port: 8086)] as ReviewService
 }
 
-database "PostgreSQL\n(user_db)" as DB_User
-database "PostgreSQL\n(vehicle_db)" as DB_Vehicle
-database "PostgreSQL\n(reservation_db)" as DB_Res
-database "PostgreSQL\n(payment_db)" as DB_Pay
-database "PostgreSQL\n(agency_db)" as DB_Agency
-database "MongoDB\n(review_db)" as DB_Review
+database "MySQL 8.0\n(user_db)" as DB_User
+database "MySQL 8.0\n(vehicle_db)" as DB_Vehicle
+database "MySQL 8.0\n(reservation_db)" as DB_Res
+database "MySQL 8.0\n(payment_db)" as DB_Pay
+database "MySQL 8.0\n(agency_db)" as DB_Agency
+database "MySQL 8.0\n(review_db)" as DB_Review
 
 user --> Frontend : HTTPS / UI
 Frontend --> Gateway : REST / JSON / JWT (Bearer)

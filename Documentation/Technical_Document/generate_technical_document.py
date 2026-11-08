@@ -156,7 +156,7 @@ r_title.font.color.rgb = C_PRIMARY
 p_main_title.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
 p_sub = doc.add_paragraph()
-r_sub = p_sub.add_run("Dossier Technique d'Architecture & de Conception Microservices\nSpring Boot 3 • Angular 17 • Spring Cloud • PostgreSQL • MongoDB • RabbitMQ")
+r_sub = p_sub.add_run("Dossier Technique d'Architecture & de Conception Microservices\nSpring Boot 3 • Angular 17 • Spring Cloud • MySQL 8.0 (InnoDB) • RabbitMQ")
 r_sub.font.name = "Calibri"
 r_sub.font.size = Pt(12)
 r_sub.font.italic = True
@@ -172,7 +172,7 @@ meta_text = """Équipe de Réalisation (Groupe de 6 Étudiants) :
 • Étudiant 3 : [Nom Étudiant 3] – Responsable Reservation-Service (Réservations & Devis)
 • Étudiant 4 : [Nom Étudiant 4] – Responsable Payment-Service (Paiements & Facturation)
 • Étudiant 5 : [Nom Étudiant 5] – Responsable Agency-Service (Agences & Staff)
-• Étudiant 6 : [Nom Étudiant 6] – Responsable Review-Service (Avis NoSQL MongoDB)
+• Étudiant 6 : [Nom Étudiant 6] – Responsable Review-Service (Avis Relationnel MySQL MySQL)
 • Service Commun (Collectif) : API Gateway (Spring Cloud) + Eureka Server + RabbitMQ
 
 Encadrant Enseignant : Équipe Pédagogique AWD
@@ -203,12 +203,12 @@ toc_items = [
     "    7.3. Reservation-Service (Cycle de Vie des Réservations)",
     "    7.4. Payment-Service (Simulation Financière & Facturation)",
     "    7.5. Agency-Service (Points de Retrait Physiques & Personnel)",
-    "    7.6. Review-Service (Avis Clients, Notes & Modération NoSQL)",
+    "    7.6. Review-Service (Avis Clients, Notes & Modération Relationnel MySQL)",
     "    7.7. API Gateway & Infrastructure Commune (Eureka & RabbitMQ)",
     "8. Modèle de Communication Inter-Microservices : Synchrone vs Asynchrone",
     "9. Diagrammes de Séquence des Parcours Clés (Réservation & Annulation)",
     "10. Diagramme de Déploiement Conteneurisé (Docker & Docker Compose)",
-    "11. Stratégie de Persistance Polyglotte (PostgreSQL & MongoDB)",
+    "11. Stratégie de Persistance Polyglotte (MySQL & MySQL)",
     "12. Architecture de Sécurité (Stateless JWT & Propagation de Contexte)",
     "13. Organisation Git & Conventions de Travail en Équipe",
     "14. Répartition Précise des Tâches entre les 6 Membres",
@@ -290,7 +290,7 @@ add_bullet_p("Isole le catalogue des véhicules, soumis à des pics de lecture m
 add_bullet_p("Constitue le coordinateur du cœur métier. Isole la logique temporelle des dates de location et le calcul des devis.", bold_prefix="Reservation-Service (Étudiant 3) : ")
 add_bullet_p("Isole la gestion comptable, les factures et les statuts financiers. Une défaillance bancaire ou un changement de passerelle de paiement n'impacte que ce module.", bold_prefix="Payment-Service (Étudiant 4) : ")
 add_bullet_p("Isole la structure physique territoriale. Un véhicule ne stocke qu'une référence 'agencyId', garantissant l'indépendance des bases.", bold_prefix="Agency-Service (Étudiant 5) : ")
-add_bullet_p("Isole les commentaires libres et notes. L'utilisation d'une base NoSQL MongoDB est hautement justifiée ici, évitant d'alourdir les bases relationnelles avec des textes volumineux.", bold_prefix="Review-Service (Étudiant 6) : ")
+add_bullet_p("Isole les commentaires libres et notes. L'utilisation d'une base Relationnel MySQL MySQL est hautement justifiée ici, évitant d'alourdir les bases relationnelles avec des textes volumineux.", bold_prefix="Review-Service (Étudiant 6) : ")
 add_bullet_p("Regroupe l'API Gateway, le serveur Eureka et le broker RabbitMQ, mutualisant la tuyauterie technique au profit de toute l'équipe.", bold_prefix="Infrastructure Commune (Collectif) : ")
 
 doc.add_page_break()
@@ -306,7 +306,7 @@ add_bullet_p("Gestion des identités, inscription, authentification, émission d
 add_bullet_p("Centraliser la sécurité et fournir une authentification unique sans état (stateless) réutilisable par l'ensemble de la plateforme.", bold_prefix="2. Problématique résolue : ")
 add_bullet_p("Inscription client, connexion sécurisée, génération de JWT, validation de token, consultation et mise à jour de profil.", bold_prefix="3. Fonctionnalités : ")
 add_bullet_p("Entité User reliée en Many-to-Many à Role. Rôles : ROLE_CLIENT, ROLE_AGENT, ROLE_ADMIN.", bold_prefix="4. Entités & Relations : ")
-add_bullet_p("PostgreSQL (user_db:5432). Justification : rigueur relationnelle, contraintes d'unicité strictes sur emails et noms d'utilisateur, respect ACID.", bold_prefix="5. Base de données : ")
+add_bullet_p("MySQL (carrental_user_db:3306). Justification : rigueur relationnelle, contraintes d'unicité strictes sur emails et noms d'utilisateur, respect ACID.", bold_prefix="5. Base de données : ")
 
 add_diagram_image("Classes_User_Service.png", "Figure 3 : Diagramme de Classes UML - User Service (Entités, DTOs, Repositories, Services, Controllers)", width_inches=5.8)
 
@@ -328,7 +328,7 @@ add_bullet_p("Gestion du parc automobile, fiches techniques, tarification journa
 add_bullet_p("Offrir un catalogue performant et consultable en temps réel sans blocage, avec recherche multicritère par marque, agence et catégorie.", bold_prefix="2. Problématique résolue : ")
 add_bullet_p("Ajout/modification de véhicules, recherche filtrée, vérification de disponibilité, mise à jour d'état (AVAILABLE, RENTED, MAINTENANCE, OUT_OF_SERVICE).", bold_prefix="3. Fonctionnalités : ")
 add_bullet_p("Entité Vehicle reliée en Many-to-One à Category (name, baseRate). Énumérations VehicleStatus, FuelType, Transmission.", bold_prefix="4. Entités & Relations : ")
-add_bullet_p("PostgreSQL (vehicle_db:5433). Justification : unicité des immatriculations, indexation B-Tree performante sur les marques et statuts.", bold_prefix="5. Base de données : ")
+add_bullet_p("MySQL (carrental_vehicle_db:3306). Justification : unicité des immatriculations, indexation B-Tree performante sur les marques et statuts.", bold_prefix="5. Base de données : ")
 
 add_diagram_image("Classes_Vehicle_Service.png", "Figure 4 : Diagramme de Classes UML - Vehicle Service", width_inches=5.8)
 
@@ -351,7 +351,7 @@ add_bullet_p("Orchestration de la réservation, calcul de prix, contrôle des ch
 add_bullet_p("Empêcher le surbooking, coordonner de façon résiliente la vérification de véhicule et le paiement sans transaction distribuée lourde.", bold_prefix="2. Problématique résolue : ")
 add_bullet_p("Création d'une réservation, calcul de durée et tarif, annulation avec conditions, suivi de statut (PENDING, CONFIRMED, ACTIVE, COMPLETED, CANCELLED).", bold_prefix="3. Fonctionnalités : ")
 add_bullet_p("Entité Reservation (reservationNumber, userId, vehicleId, pickupAgencyId, returnAgencyId, startDate, endDate, totalDays, dailyRate, totalPrice, status).", bold_prefix="4. Entités & Relations : ")
-add_bullet_p("PostgreSQL (reservation_db:5434). Justification : consistance transactionnelle ACID primordiale pour les contrats de location.", bold_prefix="5. Base de données : ")
+add_bullet_p("MySQL (carrental_reservation_db:3306). Justification : consistance transactionnelle ACID primordiale pour les contrats de location.", bold_prefix="5. Base de données : ")
 
 add_diagram_image("Classes_Reservation_Service.png", "Figure 5 : Diagramme de Classes UML - Reservation Service", width_inches=5.8)
 
@@ -373,7 +373,7 @@ add_bullet_p("Simulation et traitement des flux financiers, génération des fac
 add_bullet_p("Fournir un moteur de paiement sans dépendance externe, simulant fidèlement les états PAID, PENDING, FAILED et REFUNDED.", bold_prefix="2. Problématique résolue : ")
 add_bullet_p("Traitement de paiement, émission automatique de facture (INV-XXXX), consultation de reçu, émission d'avoirs de remboursement.", bold_prefix="3. Fonctionnalités : ")
 add_bullet_p("Entité Payment reliée en One-to-One à Invoice. Énumérations PaymentStatus, PaymentMethod (CREDIT_CARD, PAYPAL, CASH_ON_PICKUP).", bold_prefix="4. Entités & Relations : ")
-add_bullet_p("PostgreSQL (payment_db:5435). Justification : traçabilité financière, conformité fiscale et auditabilité stricte.", bold_prefix="5. Base de données : ")
+add_bullet_p("MySQL (carrental_payment_db:3306). Justification : traçabilité financière, conformité fiscale et auditabilité stricte.", bold_prefix="5. Base de données : ")
 
 add_diagram_image("Classes_Payment_Service.png", "Figure 6 : Diagramme de Classes UML - Payment Service", width_inches=5.8)
 
@@ -394,7 +394,7 @@ add_bullet_p("Gestion du réseau physique d'agences de départ/restitution, adre
 add_bullet_p("Permettre la localisation des agences et affecter le personnel local sans mélanger les données avec les véhicules ou réservations.", bold_prefix="2. Problématique résolue : ")
 add_bullet_p("Répertoire des agences, filtrage par ville, gestion des horaires d'ouverture, gestion du staff d'agence.", bold_prefix="3. Fonctionnalités : ")
 add_bullet_p("Entité Agency avec Address embarquée (@Embedded), reliée à AgencyStaff.", bold_prefix="4. Entités & Relations : ")
-add_bullet_p("PostgreSQL (agency_db:5436). Justification : intégrité des données d'adresses, requêtes géographiques.", bold_prefix="5. Base de données : ")
+add_bullet_p("MySQL (carrental_agency_db:3306). Justification : intégrité des données d'adresses, requêtes géographiques.", bold_prefix="5. Base de données : ")
 
 add_diagram_image("Classes_Agency_Service.png", "Figure 7 : Diagramme de Classes UML - Agency Service", width_inches=5.8)
 
@@ -415,10 +415,10 @@ add_styled_heading("7.6. Review-Service (Responsable : Étudiant 6 - [Nom Étudi
 add_bullet_p("Gestion des avis, commentaires, notes et modération des retours d'expérience clients.", bold_prefix="1. Nom & Responsabilité : ")
 add_bullet_p("Stocker et servir de gros volumes d'évaluations textuelles sans saturer les bases relationnelles transactionnelles.", bold_prefix="2. Problématique résolue : ")
 add_bullet_p("Dépôt d'avis avec note (1 à 5), consultation des avis par véhicule ou agence, calcul de moyenne, modération (APPROVED, REJECTED).", bold_prefix="3. Fonctionnalités : ")
-add_bullet_p("Document MongoDB Review (id, userId, targetType: VEHICLE / AGENCY, targetId, rating, comment, status, createdAt).", bold_prefix="4. Modèle de Données : ")
-add_bullet_p("MongoDB (review_db:27017). Justification : schéma NoSQL flexible, ciblage polymorphe, haute performance en lecture.", bold_prefix="5. Base de données : ")
+add_bullet_p("Document MySQL Review (id, userId, targetType: VEHICLE / AGENCY, targetId, rating, comment, status, createdAt).", bold_prefix="4. Modèle de Données : ")
+add_bullet_p("MySQL (carrental_review_db:3306). Justification : schéma Relationnel MySQL flexible, ciblage polymorphe, haute performance en lecture.", bold_prefix="5. Base de données : ")
 
-add_diagram_image("Classes_Review_Service.png", "Figure 8 : Diagramme de Classes UML - Review Service (MongoDB)", width_inches=5.8)
+add_diagram_image("Classes_Review_Service.png", "Figure 8 : Diagramme de Classes UML - Review Service (MySQL)", width_inches=5.8)
 
 add_body_p("Contrats d'API REST du Review-Service (Port 8086) :", bold_prefix="Contrats d'API : ")
 rv_headers = ["Méthode", "Endpoint", "Paramètres / Body", "Codes HTTP", "Description"]
@@ -479,7 +479,7 @@ team_data = [
     ["Étudiant 3 : [Nom Étudiant 3]", "Reservation-Service", "Calcul Devis, Dates, Coordination métier", "Gestion chevauchement, Events RabbitMQ"],
     ["Étudiant 4 : [Nom Étudiant 4]", "Payment-Service", "Simulation paiement, Factures, Avoirs", "Moteur simulation, Reçus PDF, Statuts"],
     ["Étudiant 5 : [Nom Étudiant 5]", "Agency-Service", "Agences, Adresses, Personnel local", "Fiches agences, Requêtes géographiques"],
-    ["Étudiant 6 : [Nom Étudiant 6]", "Review-Service", "Avis, Notes 1-5, Modération NoSQL", "Modèle MongoDB, Endpoints d'évaluations"],
+    ["Étudiant 6 : [Nom Étudiant 6]", "Review-Service", "Avis, Notes 1-5, Modération Relationnel MySQL", "Modèle MySQL, Endpoints d'évaluations"],
     ["Collectif (Tous)", "API Gateway + Infra", "Routage, Eureka, RabbitMQ, Docker", "Gateway, Eureka, Docker-Compose, Rapport"]
 ]
 t_team = doc.add_table(rows=1, cols=4)
