@@ -99,9 +99,9 @@ Spring Cloud OpenFeign est un client REST déclaratif. Au lieu d'écrire du code
 
 ---
 
-### Q12. Qu'est-ce que Docker Compose apporte dans votre architecture ?
+### Q12. Qu'est-ce que MySQL Workbench & Exécution Locale apporte dans votre architecture ?
 **Réponse :**
-Notre architecture compte plus de 10 composants (6 microservices métier, API Gateway, Eureka, RabbitMQ, 5 bases MySQL et 1 base MySQL). Docker Compose nous permet de décrire l'intégralité de cet écosystème dans un unique fichier `docker-compose.yml` et de démarrer toute la plateforme en une seule commande (`docker-compose up -d`) sur un réseau virtuel privé partagé (`carrental-network`), avec des volumes persistants pour chaque base de données.
+Notre architecture compte plus de 10 composants (6 microservices métier, API Gateway, Eureka, RabbitMQ, 5 bases MySQL et 1 base MySQL). MySQL Workbench & Exécution Locale nous permet de décrire l'intégralité de cet écosystème dans un unique fichier `init_databases.sql (MySQL Workbench)` et de démarrer toute la plateforme en une seule commande (`-- Exécuter Backend/init_databases.sql dans MySQL Workbench`) sur un réseau virtuel privé partagé (`carrental-network`), avec des volumes persistants pour chaque base de données.
 
 ---
 
@@ -298,7 +298,7 @@ L'endpoint `GET /api/reservations/agency/{agencyId}` dans `Reservation-Service` 
 Le microservice commun est constitué du binôme **Spring Cloud Gateway (Passerelle)** et **Netflix Eureka (Serveur de découverte)**, complété par le bus d'événements **RabbitMQ** :
 - Tous les étudiants ont contribué à configurer les routes de leurs services dans la Gateway.
 - Le mécanisme de filtre JWT et la gestion CORS y sont configurés collectivement.
-- L'orchestration dans le fichier `docker-compose.yml` garantit que chaque membre de l'équipe peut lancer l'ensemble du projet sans dépendre de l'ordinateur d'un camarade.
+- L'orchestration dans le fichier `init_databases.sql (MySQL Workbench)` garantit que chaque membre de l'équipe peut lancer l'ensemble du projet sans dépendre de l'ordinateur d'un camarade.
 
 ---
 

@@ -136,9 +136,9 @@
 ---
 
 ### Diapositive 13 : Microservice Commun & Infrastructure Développée Collectivement
-- **Contenu :** API Gateway (Spring Cloud, :8080), Eureka Server (:8761), RabbitMQ (:5672), docker-compose.yml.
+- **Contenu :** API Gateway (Spring Cloud, :8080), Eureka Server (:8761), RabbitMQ (:5672), init_databases.sql (MySQL Workbench).
 - **Notes de discours (1 min) :**
-  > *"Comme l'exigent les consignes de l'enseignant, notre projet comporte une composante commune développée collectivement par toute l'équipe. Cette infrastructure comprend : 1. L'API Gateway sous Spring Cloud Gateway, qui applique le filtre JWT réactif, gère les CORS pour notre frontend Angular, et assure le routage dynamique. 2. Le Discovery Server Eureka, qui enregistre nos services et permet d'équilibrer la charge côté client sans aucune IP codée en dur. 3. Le Broker RabbitMQ, configuré avec un Topic Exchange pour découpler les événements de réservation et de paiement. Enfin, nous avons assemblé un docker-compose.yml complet qui permet à n'importe quel membre du groupe ou à l'enseignant de démarrer l'ensemble de la plateforme en une seule commande."*
+  > *"Comme l'exigent les consignes de l'enseignant, notre projet comporte une composante commune développée collectivement par toute l'équipe. Cette infrastructure comprend : 1. L'API Gateway sous Spring Cloud Gateway, qui applique le filtre JWT réactif, gère les CORS pour notre frontend Angular, et assure le routage dynamique. 2. Le Discovery Server Eureka, qui enregistre nos services et permet d'équilibrer la charge côté client sans aucune IP codée en dur. 3. Le Broker RabbitMQ, configuré avec un Topic Exchange pour découpler les événements de réservation et de paiement. Enfin, nous avons assemblé un init_databases.sql (MySQL Workbench) complet qui permet à n'importe quel membre du groupe ou à l'enseignant de démarrer l'ensemble de la plateforme en une seule commande."*
 
 ---
 

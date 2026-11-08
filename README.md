@@ -71,7 +71,7 @@ L'architecture repose sur **6 microservices métier** répartis équitablement e
 - **Communication Inter-services :**
   - **Synchrone :** REST / Spring Cloud OpenFeign (pour les vérifications de disponibilité et l'initialisation de paiement en temps réel).
   - **Asynchrone :** RabbitMQ (AMQP) (pour la publication d'événements : `reservation.confirmed`, `payment.completed`, `vehicle.status.updated`).
-- **Conteneurisation :** Docker & Docker Compose.
+- **Conteneurisation :** MySQL Workbench & MySQL Workbench & Exécution Locale.
 - **Gestion de versions & Outils :** Git, GitHub, Maven, Postman.
 
 ---
@@ -91,7 +91,7 @@ CarRental-AWD/
 │   ├── Review-Service/         # Microservice Avis & Évaluations (Étudiant 6)
 │   ├── API-Gateway/            # Microservice Commun : Passerelle & Routage
 │   ├── pom.xml                 # POM parent multi-modules Maven
-│   └── docker-compose.yml      # Orchestration de tous les conteneurs
+│   └── init_databases.sql (MySQL Workbench)      # Orchestration de tous les conteneurs
 ├── Frontend/                   # Application cliente Angular 17+
 │   ├── src/                    # Composants, services, modèles, interceptors
 │   ├── package.json
@@ -106,7 +106,7 @@ CarRental-AWD/
 │   │   ├── Sequence_Reservation_Complete.puml / .mmd / .png
 │   │   ├── Sequence_Annulation_Paiement.puml
 │   │   ├── Communication_Synchrone_Asynchrone.puml / .png
-│   │   ├── Deploiement_Docker.puml / .png
+│   │   ├── Deploiement_MySQL Workbench.puml / .png
 │   │   └── Classes_*.puml
 │   └── Technical_Document/     # Document technique complet (.docx et .md)
 │       └── Dossier_Technique_CarRental.docx
@@ -119,25 +119,25 @@ CarRental-AWD/
 ## 🚀 5. Installation et Exécution
 
 ### Prérequis
-- Docker et Docker Compose installés.
+- MySQL Workbench et MySQL Workbench & Exécution Locale installés.
 - Java 17 (JDK) et Maven 3.8+ (pour compilation locale).
 - Node.js 18+ et npm (pour le frontend Angular).
 
-### Option 1 : Démarrage Global via Docker Compose (Recommandé)
+### Option 1 : Démarrage Global via MySQL Workbench & Exécution Locale (Recommandé)
 Pour lancer l'ensemble des conteneurs (Bases de données, RabbitMQ, Gateway et Microservices) :
 
 ```bash
 cd Backend
-docker-compose up -d
+-- Exécuter Backend/init_databases.sql dans MySQL Workbench
 ```
 
 Vérifier l'état des conteneurs :
 ```bash
-docker-compose ps
+MySQL Workbench ps
 ```
 
 ### Option 2 : Exécution Locale par Service
-1. **Démarrer les bases de données et RabbitMQ** via Docker :
+1. **Démarrer les bases de données et RabbitMQ** via MySQL Workbench :
    ```bash
    docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
    docker run -d --name postgres -p 5432:5432 -e POSTGRES_PASSWORD=postgres postgres:15-alpine

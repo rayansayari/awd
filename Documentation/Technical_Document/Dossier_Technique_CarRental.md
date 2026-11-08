@@ -44,7 +44,7 @@ En mettant en relation directe les clients et un réseau d'agences physiques, la
 - Application du pattern **Database-per-Service** (5 bases MySQL + 1 base MySQL MySQL).
 - Communication hybride : **Synchrone** (OpenFeign / REST) et **Asynchrone** (RabbitMQ AMQP).
 - Application cliente Single Page Application (SPA) en **Angular 17+**.
-- Déploiement conteneurisé complet avec **Docker Compose**.
+- Déploiement conteneurisé complet avec **MySQL Workbench & Exécution Locale**.
 
 ---
 
@@ -217,7 +217,7 @@ Le parcours complet d'une réservation comprend 6 étapes :
 | **Étudiant 4** | Payment-Service | Simulation financière, Factures, Remboursements |
 | **Étudiant 5** | Agency-Service | Points de retrait, Adresses, Employés locaux |
 | **Étudiant 6** | Review-Service | Avis MySQL MySQL, Notes 1-5, Modération |
-| **Collectif** | Gateway & Infra | Routage, Eureka, RabbitMQ, Docker Compose |
+| **Collectif** | Gateway & Infra | Routage, Eureka, RabbitMQ, MySQL Workbench & Exécution Locale |
 
 ---
 

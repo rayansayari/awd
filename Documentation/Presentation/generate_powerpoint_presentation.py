@@ -649,7 +649,7 @@ create_header(s13, "6. Microservice Commun & Infrastructure Développée Collect
 infra_cards = [
     ("API Gateway (8080)", "• Spring Cloud Gateway\n• Routage dynamique /api/**\n• Validation des jetons JWT\n• Propagation headers (X-User-Id)\n• CorsWebFilter réactif (localhost:4200)\n• Rate Limiting anti-DDoS", C_PRIMARY),
     ("Eureka Discovery (8761)", "• Netflix Eureka Server\n• Enregistrement automatique au boot\n• Heartbeat toutes les 30s\n• Load Balancing côté client\n• Tolérance aux pannes\n• Zéro IP en dur dans le code", C_SECONDARY),
-    ("RabbitMQ & Docker", "• Broker AMQP (Port 5672/15672)\n• Topic Exchange 'carrental.topic'\n• Files durables (durable: true)\n• docker-compose.yml complet\n• Réseau bridge 'carrental-network'\n• 1 commande : docker-compose up", C_ACCENT)
+    ("RabbitMQ & MySQL Workbench", "• Broker AMQP (Port 5672/15672)\n• Topic Exchange 'carrental.topic'\n• Files durables (durable: true)\n• Script init_databases.sql fourni\n• Serveur MySQL 8.0 local (:3306)\n• Administration visuelle Workbench", C_ACCENT)
 ]
 
 for idx, (title, content, col) in enumerate(infra_cards):
@@ -682,7 +682,7 @@ Cette infrastructure comprend :
 1. L'API Gateway sous Spring Cloud Gateway, qui applique le filtre JWT réactif, gère les CORS pour notre frontend Angular, et assure le routage dynamique.
 2. Le Discovery Server Eureka, qui enregistre nos services et permet d'équilibrer la charge côté client sans aucune IP codée en dur.
 3. Le Broker RabbitMQ, configuré avec un Topic Exchange pour découpler les événements de réservation et de paiement.
-Enfin, nous avons assemblé un docker-compose.yml complet qui permet à n'importe quel membre du groupe ou à l'enseignant de démarrer l'ensemble de la plateforme en une seule commande." """)
+Enfin, nous avons assemblé un init_databases.sql complet qui permet à n'importe quel membre du groupe ou à l'enseignant de démarrer l'ensemble de la plateforme en une seule commande." """)
 
 # =========================================================================
 # SLIDE 14 : ORGANISATION GIT & GESTION DE PROJET

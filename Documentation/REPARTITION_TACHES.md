@@ -16,7 +16,7 @@ Chaque étudiant dispose d'un microservice dédié, d'un périmètre précis de 
 | **Étudiant 4**<br/>`[Nom Étudiant 4]` | **Payment-Service** | Simulation de paiement, Facturation, Statuts transactions | MySQL (`payment_db`) | Spring Boot, OpenFeign, RabbitMQ (Producer) |
 | **Étudiant 5**<br/>`[Nom Étudiant 5]` | **Agency-Service** | Agences physiques, Géolocalisation, Employés locaux | MySQL (`agency_db`) | Spring Boot, JPA, Spacial Queries |
 | **Étudiant 6**<br/>`[Nom Étudiant 6]` | **Review-Service** | Évaluations, Notes (1-5), Commentaires, Modération | MySQL (`review_db`) | Spring Boot, Spring Data MySQL |
-| **Collectif (Présenté par Étudiant 1 ou 3)** | **API Gateway + Discovery** | Routage centralisé, Enregistrement Eureka, Sécurité CORS, Docker | - | Spring Cloud Gateway, Netflix Eureka, Docker Compose |
+| **Collectif (Présenté par Étudiant 1 ou 3)** | **API Gateway + Discovery** | Routage centralisé, Enregistrement Eureka, Sécurité CORS, MySQL Workbench | - | Spring Cloud Gateway, Netflix Eureka, MySQL Workbench & Exécution Locale |
 
 ---
 
@@ -143,4 +143,4 @@ Chaque étudiant dispose d'un microservice dédié, d'un périmètre précis de 
   - Intégration de **Netflix Eureka** sur le port `8761` pour la découverte dynamique sans IPs en dur.
   - Mise en place du broker **RabbitMQ** sur le port `5672`.
   - Configuration de la politique CORS pour autoriser le frontend Angular (`localhost:4200`).
-  - Orchestration globale via le fichier `docker-compose.yml`.
+  - Orchestration globale via le fichier `init_databases.sql (MySQL Workbench)`.

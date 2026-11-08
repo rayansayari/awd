@@ -207,7 +207,7 @@ toc_items = [
     "    7.7. API Gateway & Infrastructure Commune (Eureka & RabbitMQ)",
     "8. Modèle de Communication Inter-Microservices : Synchrone vs Asynchrone",
     "9. Diagrammes de Séquence des Parcours Clés (Réservation & Annulation)",
-    "10. Diagramme de Déploiement Conteneurisé (Docker & Docker Compose)",
+    "10. Diagramme de Déploiement Conteneurisé (MySQL Workbench & MySQL Workbench)",
     "11. Stratégie de Persistance Polyglotte (MySQL & MySQL)",
     "12. Architecture de Sécurité (Stateless JWT & Propagation de Contexte)",
     "13. Organisation Git & Conventions de Travail en Équipe",
@@ -450,10 +450,10 @@ add_body_p("En cas d'annulation de la location par le client, le scénario suiva
 
 add_diagram_image("Sequence_Annulation_Paiement.png", "Figure 11 : Diagramme de Séquence UML du Parcours d'Annulation et de Remboursement", width_inches=6.2)
 
-add_styled_heading("10. Diagramme de Déploiement Conteneurisé (Docker)", level=1)
-add_body_p("L'ensemble des composants applicatifs et des bases de données sont encapsulés dans des conteneurs Docker reliés par le réseau virtuel 'carrental-network' :")
+add_styled_heading("10. Diagramme de Déploiement & Environnement MySQL Workbench", level=1)
+add_body_p("L'ensemble des composants applicatifs et des bases de données sont encapsulés dans des conteneurs MySQL Workbench reliés par le réseau virtuel 'carrental-network' :")
 
-add_diagram_image("Deploiement_Docker.png", "Figure 12 : Diagramme de Déploiement UML Conteneurisé avec Docker Compose", width_inches=6.2)
+add_diagram_image("Deploiement_Systeme.png", "Figure 12 : Diagramme de Déploiement UML (Services Spring Boot & Administration MySQL Workbench)", width_inches=6.2)
 
 # =========================================================================
 # 11, 12, 13, 14 & 15. PERSISTANCE, SÉCURITÉ, GIT, PLANNING, CONCLUSION
@@ -480,7 +480,7 @@ team_data = [
     ["Étudiant 4 : [Nom Étudiant 4]", "Payment-Service", "Simulation paiement, Factures, Avoirs", "Moteur simulation, Reçus PDF, Statuts"],
     ["Étudiant 5 : [Nom Étudiant 5]", "Agency-Service", "Agences, Adresses, Personnel local", "Fiches agences, Requêtes géographiques"],
     ["Étudiant 6 : [Nom Étudiant 6]", "Review-Service", "Avis, Notes 1-5, Modération Relationnel MySQL", "Modèle MySQL, Endpoints d'évaluations"],
-    ["Collectif (Tous)", "API Gateway + Infra", "Routage, Eureka, RabbitMQ, Docker", "Gateway, Eureka, Docker-Compose, Rapport"]
+    ["Collectif (Tous)", "API Gateway + Infra", "Routage, Eureka, RabbitMQ, MySQL Workbench", "Gateway, Eureka, MySQL Workbench-Compose, Rapport"]
 ]
 t_team = doc.add_table(rows=1, cols=4)
 style_table(t_team, [1.6, 1.4, 2.0, 1.8], team_headers, team_data)

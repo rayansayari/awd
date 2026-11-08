@@ -391,7 +391,7 @@ flowchart TD
 
 ```mermaid
 graph TB
-    subgraph Host["Hôte Docker (Network: carrental-net)"]
+    subgraph Host["Hôte MySQL Workbench (Network: carrental-net)"]
         NGINX["Frontend Angular (Nginx) :4200"]
         GATEWAY["API Gateway :8080"]
         EUREKA["Eureka Server :8761"]

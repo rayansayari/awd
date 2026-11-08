@@ -1,0 +1,82 @@
+@startuml Deploiement_Systeme
+!theme plain
+skinparam nodeStyle rectangle
+
+title Diagramme de Déploiement Physique & Environnement d'Exécution (MySQL Workbench)
+
+node "Poste Client / Utilisateur" {
+    artifact "Navigateur Web\n(Chrome / Firefox / Edge)" as Browser
+}
+
+node "Environnement Serveur / Machine de Développement" {
+    
+    node "Serveur Web Frontend (Node.js / Angular CLI)" {
+        component "Application Client Angular 17+\nPort: 4200" as App_Angular
+    }
+
+    node "Infrastructure Commune (JVM Java 17)" {
+        component "Eureka Discovery Server\nPort: 8761" as Srv_Eureka
+        component "API Gateway (Spring Cloud)\nPort: 8080" as Srv_Gateway
+        queue "RabbitMQ Message Broker\nPort: 5672" as Broker_Rabbit
+    }
+
+    node "Microservices Métier (JVM Java 17 / Spring Boot 3.2)" {
+        component "User-Service\nPort: 8081" as MS_User
+        component "Vehicle-Service\nPort: 8082" as MS_Vehicle
+        component "Reservation-Service\nPort: 8083" as MS_Res
+        component "Payment-Service\nPort: 8084" as MS_Pay
+        component "Agency-Service\nPort: 8085" as MS_Agency
+        component "Review-Service\nPort: 8086" as MS_Review
+    }
+
+    node "Serveur de Données MySQL 8.0 (Port: 3306)" {
+        database "carrental_user_db" as DB_User
+        database "carrental_vehicle_db" as DB_Vehicle
+        database "carrental_reservation_db" as DB_Res
+        database "carrental_payment_db" as DB_Pay
+        database "carrental_agency_db" as DB_Agency
+        database "carrental_review_db" as DB_Review
+    }
+
+    node "Outil d'Administration & Gestion" {
+        artifact "MySQL Workbench 8.0\n(Gestion Schémas, Requêtes SQL, Supervision)" as Workbench
+    }
+}
+
+Browser --> App_Angular : HTTP :4200
+Browser --> Srv_Gateway : HTTP REST :8080 / JWT
+
+Srv_Gateway --> Srv_Eureka : Découverte dynamique
+MS_User ..> Srv_Eureka : Enregistrement
+MS_Vehicle ..> Srv_Eureka : Enregistrement
+MS_Res ..> Srv_Eureka : Enregistrement
+MS_Pay ..> Srv_Eureka : Enregistrement
+MS_Agency ..> Srv_Eureka : Enregistrement
+MS_Review ..> Srv_Eureka : Enregistrement
+
+Srv_Gateway --> MS_User : Routage /api/users/**
+Srv_Gateway --> MS_Vehicle : Routage /api/vehicles/**
+Srv_Gateway --> MS_Res : Routage /api/reservations/**
+Srv_Gateway --> MS_Pay : Routage /api/payments/**
+Srv_Gateway --> MS_Agency : Routage /api/agencies/**
+Srv_Gateway --> MS_Review : Routage /api/reviews/**
+
+MS_User --> DB_User : Connexion JDBC :3306
+MS_Vehicle --> DB_Vehicle : Connexion JDBC :3306
+MS_Res --> DB_Res : Connexion JDBC :3306
+MS_Pay --> DB_Pay : Connexion JDBC :3306
+MS_Agency --> DB_Agency : Connexion JDBC :3306
+MS_Review --> DB_Review : Connexion JDBC :3306
+
+Workbench ..> DB_User : Administration SQL
+Workbench ..> DB_Vehicle : Administration SQL
+Workbench ..> DB_Res : Administration SQL
+Workbench ..> DB_Pay : Administration SQL
+Workbench ..> DB_Agency : Administration SQL
+Workbench ..> DB_Review : Administration SQL
+
+MS_Res ..> Broker_Rabbit : AMQP Events
+MS_Pay ..> Broker_Rabbit : AMQP Events
+Broker_Rabbit ..> MS_Vehicle : AMQP Listener
+
+@enduml

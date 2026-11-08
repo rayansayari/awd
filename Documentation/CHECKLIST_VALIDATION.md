@@ -10,7 +10,7 @@ Cette grille de contrôle vérifie point par point la stricte conformité des li
 |---|:---:|---|
 | Dépôt Git créé pour le projet AWD | [x] Terminé | Répertoire structuré prêt pour initialisation `git init` et push distant |
 | Enseignant ajouté en tant que collaborateur | [ ] À compléter | **Action étudiant :** Inviter le pseudo GitHub de l'enseignant dès la création du repo public |
-| Dossier `Backend/` regroupant les microservices | [x] Terminé | Contient les 6 microservices métier + API Gateway + Eureka + docker-compose.yml |
+| Dossier `Backend/` regroupant les microservices | [x] Terminé | Contient les 6 microservices métier + API Gateway + Eureka + init_databases.sql (MySQL Workbench) |
 | Dossier `Frontend/` contenant l'application cliente | [x] Terminé | Application Angular 17+ avec structure MVC, services, modèles, interceptors |
 | Dossier `Documentation/` structuré | [x] Terminé | Sous-dossiers `Presentation/`, `Diagrams/`, `Technical_Document/` présents |
 | Présentation de la séance 4 incluse | [x] Terminé | `Documentation/Presentation/Presentation_Seance4_CarRental.pptx` |
