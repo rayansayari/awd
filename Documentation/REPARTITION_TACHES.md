@@ -10,12 +10,12 @@ Chaque étudiant dispose d'un microservice dédié, d'un périmètre précis de 
 
 | Membre de l'Équipe | Microservice Attribué | Rôle & Responsabilité Principale | Base de Données | Technologies Clés |
 |---|---|---|---|---|
-| **Étudiant 1**<br/>`[Nom Étudiant 1]` | **User-Service** | Authentification, JWT, Gestion des comptes, Rôles & Sécurité | MySQL (`user_db`) | Spring Boot, Spring Security, JJWT, JPA |
-| **Étudiant 2**<br/>`[Nom Étudiant 2]` | **Vehicle-Service** | Parc automobile, Disponibilités, Filtres & Catégories | MySQL (`vehicle_db`) | Spring Boot, JPA, Hibernate Search |
-| **Étudiant 3**<br/>`[Nom Étudiant 3]` | **Reservation-Service** | Cycle de vie des réservations, Devis, Coordination métier | MySQL (`reservation_db`) | Spring Boot, OpenFeign, RabbitMQ (Producer) |
-| **Étudiant 4**<br/>`[Nom Étudiant 4]` | **Payment-Service** | Simulation de paiement, Facturation, Statuts transactions | MySQL (`payment_db`) | Spring Boot, OpenFeign, RabbitMQ (Producer) |
-| **Étudiant 5**<br/>`[Nom Étudiant 5]` | **Agency-Service** | Agences physiques, Géolocalisation, Employés locaux | MySQL (`agency_db`) | Spring Boot, JPA, Spacial Queries |
-| **Étudiant 6**<br/>`[Nom Étudiant 6]` | **Review-Service** | Évaluations, Notes (1-5), Commentaires, Modération | MySQL (`review_db`) | Spring Boot, Spring Data MySQL |
+| **Étudiant 1**<br/>`[Étudiant 1]` | **User-Service** | Authentification, JWT, Gestion des comptes, Rôles & Sécurité | MySQL (`user_db`) | Spring Boot, Spring Security, JJWT, JPA |
+| **Étudiant 2**<br/>`[Étudiant 2]` | **Vehicle-Service** | Parc automobile, Disponibilités, Filtres & Catégories | MySQL (`vehicle_db`) | Spring Boot, JPA, Hibernate Search |
+| **Étudiant 3**<br/>`[Étudiant 3]` | **Reservation-Service** | Cycle de vie des réservations, Devis, Coordination métier | MySQL (`reservation_db`) | Spring Boot, OpenFeign, RabbitMQ (Producer) |
+| **Étudiant 4**<br/>`[Étudiant 4]` | **Payment-Service** | Simulation de paiement, Facturation, Statuts transactions | MySQL (`payment_db`) | Spring Boot, OpenFeign, RabbitMQ (Producer) |
+| **Étudiant 5**<br/>`[Étudiant 5]` | **Agency-Service** | Agences physiques, Géolocalisation, Employés locaux | MySQL (`agency_db`) | Spring Boot, JPA, Spacial Queries |
+| **Étudiant 6**<br/>`[Étudiant 6]` | **Review-Service** | Évaluations, Notes (1-5), Commentaires, Modération | MySQL (`review_db`) | Spring Boot, Spring Data MySQL |
 | **Collectif (Présenté par Étudiant 1 ou 3)** | **API Gateway + Discovery** | Routage centralisé, Enregistrement Eureka, Sécurité CORS, MySQL Workbench | - | Spring Cloud Gateway, Netflix Eureka, MySQL Workbench & Exécution Locale |
 
 ---
@@ -25,7 +25,7 @@ Chaque étudiant dispose d'un microservice dédié, d'un périmètre précis de 
 ---
 
 ### 👤 Étudiant 1 : User-Service (Authentification & Utilisateurs)
-- **Étudiant responsable :** `[Nom Étudiant 1]`
+- **Étudiant responsable :**
 - **Responsabilités :**
   - Inscription sécurisée des clients et employés.
   - Authentification par identifiant/email et mot de passe chiffré.
@@ -44,7 +44,7 @@ Chaque étudiant dispose d'un microservice dédié, d'un périmètre précis de 
 ---
 
 ### 🚗 Étudiant 2 : Vehicle-Service (Flotte & Véhicules)
-- **Étudiant responsable :** `[Nom Étudiant 2]`
+- **Étudiant responsable :** 
 - **Responsabilités :**
   - Gestion du catalogue de véhicules (Marque, Modèle, Immatriculation, Année, Motorisation).
   - Gestion des catégories de voitures (Économique, Berline, SUV, Luxe) et de leurs tarifs journaliers de base.
@@ -63,7 +63,7 @@ Chaque étudiant dispose d'un microservice dédié, d'un périmètre précis de 
 ---
 
 ### 📅 Étudiant 3 : Reservation-Service (Réservations)
-- **Étudiant responsable :** `[Nom Étudiant 3]`
+- **Étudiant responsable :**
 - **Responsabilités :**
   - Création et cycle de vie d'une réservation (`PENDING`, `CONFIRMED`, `ACTIVE`, `COMPLETED`, `CANCELLED`).
   - Calcul automatique de la durée (en jours) et du montant total en fonction du tarif journalier.
@@ -83,7 +83,7 @@ Chaque étudiant dispose d'un microservice dédié, d'un périmètre précis de 
 ---
 
 ### 💳 Étudiant 4 : Payment-Service (Paiements & Factures)
-- **Étudiant responsable :** `[Nom Étudiant 4]`
+- **Étudiant responsable :**
 - **Responsabilités :**
   - Simulation de transaction bancaire (statuts `PENDING`, `PAID`, `FAILED`, `REFUNDED`).
   - Génération de factures associées avec référence unique (`INV-XXXX`).
@@ -101,7 +101,7 @@ Chaque étudiant dispose d'un microservice dédié, d'un périmètre précis de 
 ---
 
 ### 🏢 Étudiant 5 : Agency-Service (Agences & Emplacements)
-- **Étudiant responsable :** `[Nom Étudiant 5]`
+- **Étudiant responsable :**
 - **Responsabilités :**
   - Répertoire des agences physiques de prise en charge et de restitution.
   - Coordonnées complètes, horaires d'ouverture et géolocalisation (Ville, Adresse, Code postal).
@@ -120,7 +120,7 @@ Chaque étudiant dispose d'un microservice dédié, d'un périmètre précis de 
 ---
 
 ### ⭐ Étudiant 6 : Review-Service (Avis & Évaluations)
-- **Étudiant responsable :** `[Nom Étudiant 6]`
+- **Étudiant responsable :**
 - **Responsabilités :**
   - Collecte des notes (1 à 5 étoiles) et des avis rédigés par les clients.
   - Évaluations polymorphes : avis portant soit sur un véhicule (`VEHICLE`), soit sur une agence (`AGENCY`).
@@ -137,7 +137,7 @@ Chaque étudiant dispose d'un microservice dédié, d'un périmètre précis de 
 ---
 
 ### 🌐 Partie Collective : API Gateway & Infrastructure Commune
-- **Présentée par :** `[Nom Étudiant 1 ou Nom Étudiant 3]` (délégation collective)
+- **Présentée par :** (délégation collective)
 - **Responsabilités collectives :**
   - Configuration de **Spring Cloud Gateway** sur le port `8080`.
   - Intégration de **Netflix Eureka** sur le port `8761` pour la découverte dynamique sans IPs en dur.
