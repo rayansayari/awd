@@ -1,0 +1,36 @@
+sequenceDiagram
+    autonumber
+    actor Client as Client (Angular)
+    participant GW as API Gateway (:8080)
+    participant VS as Vehicle Service (:8082)
+    participant RS as Reservation Service (:8083)
+    participant PS as Payment Service (:8084)
+    participant MQ as RabbitMQ Broker
+
+    Note over Client, GW: Étape 1 : Recherche & Disponibilité
+    Client->>GW: GET /api/vehicles/search?agency=1&cat=SUV
+    GW->>VS: GET /api/vehicles/search
+    VS-->>GW: 200 OK [Liste véhicules]
+    GW-->>Client: 200 OK (Catalogue affiché)
+
+    Note over Client, GW: Étape 2 : Demande de Réservation
+    Client->>GW: POST /api/reservations (JWT, dates, vehicleId=5)
+    GW->>RS: POST /api/reservations
+
+    Note over RS, VS: Étape 3 : Vérification Synchrone (Feign)
+    RS->>VS: GET /api/vehicles/5 (Vérifier tarif & état)
+    VS-->>RS: 200 OK {pricePerDay: 45, status: AVAILABLE}
+    Note over RS: Calcul montant (5j * 45€ = 225€) + Sauvegarde (PENDING)
+
+    Note over RS, PS: Étape 4 : Déclenchement Paiement (Feign)
+    RS->>PS: POST /api/payments/process (225€, CREDIT_CARD)
+    Note over PS: Simulation succès -> Statut PAID + Facture
+    PS-->>RS: 201 Created {status: PAID, txId: TX-77892}
+
+    Note over RS, MQ: Étape 5 : Confirmation & Événement Asynchrone
+    Note over RS: Mise à jour statut -> CONFIRMED
+    RS-)MQ: Événement "reservation.confirmed" {resId: 101, vehicleId: 5}
+    MQ-)VS: Consomme événement -> màj statut véhicule (RENTED)
+
+    RS-->>GW: 201 Created (Réservation confirmée)
+    GW-->>Client: 201 Created (Confirmation & Facture)

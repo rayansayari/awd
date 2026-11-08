@@ -1,0 +1,96 @@
+@startuml Classes_Review_Service
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+
+package "com.carrental.review.domain" {
+    enum ReviewTargetType {
+        VEHICLE
+        AGENCY
+    }
+
+    enum ModerationStatus {
+        PENDING
+        APPROVED
+        REJECTED
+    }
+
+    class Review {
+        - id: String
+        - userId: Long
+        - targetType: ReviewTargetType
+        - targetId: Long
+        - rating: Integer
+        - comment: String
+        - status: ModerationStatus
+        - createdAt: LocalDateTime
+        - updatedAt: LocalDateTime
+    }
+
+    Review --> ReviewTargetType
+    Review --> ModerationStatus
+}
+
+package "com.carrental.review.dto" {
+    class ReviewRequest {
+        + userId: Long
+        + targetType: ReviewTargetType
+        + targetId: Long
+        + rating: Integer
+        + comment: String
+    }
+
+    class ReviewResponse {
+        + id: String
+        + userId: Long
+        + targetType: ReviewTargetType
+        + targetId: Long
+        + rating: Integer
+        + comment: String
+        + status: ModerationStatus
+        + createdAt: LocalDateTime
+    }
+
+    class RatingSummaryDTO {
+        + targetId: Long
+        + targetType: ReviewTargetType
+        + averageRating: Double
+        + totalReviews: Long
+    }
+}
+
+package "com.carrental.review.repository" {
+    interface ReviewRepository {
+        + findByTargetTypeAndTargetId(type: ReviewTargetType, targetId: Long): List<Review>
+        + findByUserId(userId: Long): List<Review>
+        + findByStatus(status: ModerationStatus): List<Review>
+    }
+}
+
+package "com.carrental.review.service" {
+    interface ReviewService {
+        + createReview(req: ReviewRequest): ReviewResponse
+        + getReviewsByTarget(type: ReviewTargetType, targetId: Long): List<ReviewResponse>
+        + getRatingSummary(type: ReviewTargetType, targetId: Long): RatingSummaryDTO
+        + getReviewsByUser(userId: Long): List<ReviewResponse>
+        + moderateReview(id: String, status: ModerationStatus): ReviewResponse
+        + deleteReview(id: String): void
+    }
+}
+
+package "com.carrental.review.controller" {
+    class ReviewController {
+        - reviewService: ReviewService
+        + create(req: ReviewRequest): ResponseEntity<ReviewResponse>
+        + getByVehicle(vehicleId: Long): ResponseEntity<List<ReviewResponse>>
+        + getByAgency(agencyId: Long): ResponseEntity<List<ReviewResponse>>
+        + getSummary(type: ReviewTargetType, targetId: Long): ResponseEntity<RatingSummaryDTO>
+        + moderate(id: String, status: ModerationStatus): ResponseEntity<ReviewResponse>
+    }
+}
+
+ReviewController --> ReviewService
+ReviewService ..> ReviewRepository
+ReviewRepository --> Review
+
+@enduml

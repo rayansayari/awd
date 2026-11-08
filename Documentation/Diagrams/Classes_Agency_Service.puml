@@ -1,0 +1,106 @@
+@startuml Classes_Agency_Service
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+
+package "com.carrental.agency.domain" {
+    class Address {
+        - street: String
+        - city: String
+        - state: String
+        - zipCode: String
+        - country: String
+        - latitude: Double
+        - longitude: Double
+    }
+
+    class Agency {
+        - id: Long
+        - name: String
+        - code: String
+        - email: String
+        - phone: String
+        - address: Address
+        - openingHours: String
+        - active: Boolean
+        - createdAt: LocalDateTime
+    }
+
+    class AgencyStaff {
+        - id: Long
+        - userId: Long
+        - agencyId: Long
+        - position: String
+        - hireDate: LocalDate
+    }
+
+    Agency *-- Address : localisée à >
+    Agency "1" -- "0..*" AgencyStaff : emploie >
+}
+
+package "com.carrental.agency.dto" {
+    class AgencyDTO {
+        + id: Long
+        + name: String
+        + code: String
+        + email: String
+        + phone: String
+        + city: String
+        + street: String
+        + zipCode: String
+        + openingHours: String
+        + active: Boolean
+    }
+
+    class StaffDTO {
+        + id: Long
+        + userId: Long
+        + agencyId: Long
+        + position: String
+    }
+}
+
+package "com.carrental.agency.repository" {
+    interface AgencyRepository {
+        + findByAddress_CityIgnoreCase(city: String): List<Agency>
+        + findByCode(code: String): Optional<Agency>
+        + findByActiveTrue(): List<Agency>
+    }
+
+    interface AgencyStaffRepository {
+        + findByAgencyId(agencyId: Long): List<AgencyStaff>
+        + findByUserId(userId: Long): Optional<AgencyStaff>
+    }
+}
+
+package "com.carrental.agency.service" {
+    interface AgencyService {
+        + getAllAgencies(): List<AgencyDTO>
+        + getAgencyById(id: Long): AgencyDTO
+        + getAgenciesByCity(city: String): List<AgencyDTO>
+        + createAgency(dto: AgencyDTO): AgencyDTO
+        + updateAgency(id: Long, dto: AgencyDTO): AgencyDTO
+        + deleteAgency(id: Long): void
+        + assignStaff(staffDTO: StaffDTO): StaffDTO
+    }
+}
+
+package "com.carrental.agency.controller" {
+    class AgencyController {
+        - agencyService: AgencyService
+        + getAll(): ResponseEntity<List<AgencyDTO>>
+        + getById(id: Long): ResponseEntity<AgencyDTO>
+        + getByCity(city: String): ResponseEntity<List<AgencyDTO>>
+        + create(dto: AgencyDTO): ResponseEntity<AgencyDTO>
+        + update(id: Long, dto: AgencyDTO): ResponseEntity<AgencyDTO>
+        + delete(id: Long): ResponseEntity<Void>
+    }
+}
+
+AgencyController --> AgencyService
+AgencyService ..> AgencyRepository
+AgencyService ..> AgencyStaffRepository
+AgencyRepository --> Agency
+AgencyStaffRepository --> AgencyStaff
+
+@enduml

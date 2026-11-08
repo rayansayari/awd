@@ -1,0 +1,237 @@
+version: '3.8'
+
+services:
+  # =========================================================================
+  # Infrastructure Commune (Eureka, Gateway, RabbitMQ)
+  # =========================================================================
+  discovery-server:
+    image: springcloud/eureka
+    container_name: carrental-eureka
+    ports:
+      - "8761:8761"
+    networks:
+      - carrental-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: carrental-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=carrental
+      - RABBITMQ_DEFAULT_PASS=carrentalpass
+    networks:
+      - carrental-network
+
+  api-gateway:
+    build: ./API-Gateway
+    container_name: carrental-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+    depends_on:
+      - discovery-server
+    networks:
+      - carrental-network
+
+  # =========================================================================
+  # Bases de Données (Database per service)
+  # =========================================================================
+  user-db:
+    image: postgres:15-alpine
+    container_name: user-db
+    environment:
+      POSTGRES_DB: user_db
+      POSTGRES_USER: user_admin
+      POSTGRES_PASSWORD: user_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - user_data:/var/lib/postgresql/data
+    networks:
+      - carrental-network
+
+  vehicle-db:
+    image: postgres:15-alpine
+    container_name: vehicle-db
+    environment:
+      POSTGRES_DB: vehicle_db
+      POSTGRES_USER: vehicle_admin
+      POSTGRES_PASSWORD: vehicle_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - vehicle_data:/var/lib/postgresql/data
+    networks:
+      - carrental-network
+
+  reservation-db:
+    image: postgres:15-alpine
+    container_name: reservation-db
+    environment:
+      POSTGRES_DB: reservation_db
+      POSTGRES_USER: res_admin
+      POSTGRES_PASSWORD: res_password
+    ports:
+      - "5434:5432"
+    volumes:
+      - reservation_data:/var/lib/postgresql/data
+    networks:
+      - carrental-network
+
+  payment-db:
+    image: postgres:15-alpine
+    container_name: payment-db
+    environment:
+      POSTGRES_DB: payment_db
+      POSTGRES_USER: payment_admin
+      POSTGRES_PASSWORD: payment_password
+    ports:
+      - "5435:5432"
+    volumes:
+      - payment_data:/var/lib/postgresql/data
+    networks:
+      - carrental-network
+
+  agency-db:
+    image: postgres:15-alpine
+    container_name: agency-db
+    environment:
+      POSTGRES_DB: agency_db
+      POSTGRES_USER: agency_admin
+      POSTGRES_PASSWORD: agency_password
+    ports:
+      - "5436:5432"
+    volumes:
+      - agency_data:/var/lib/postgresql/data
+    networks:
+      - carrental-network
+
+  review-db:
+    image: mongo:6.0
+    container_name: review-db
+    environment:
+      MONGO_INITDB_DATABASE: review_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - review_data:/data/db
+    networks:
+      - carrental-network
+
+  # =========================================================================
+  # Microservices Métier (Spring Boot 3.2+)
+  # =========================================================================
+  user-service:
+    build: ./User-Service
+    container_name: user-service
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://user-db:5432/user_db
+      - SPRING_DATASOURCE_USERNAME=user_admin
+      - SPRING_DATASOURCE_PASSWORD=user_password
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+    depends_on:
+      - user-db
+      - discovery-server
+    networks:
+      - carrental-network
+
+  vehicle-service:
+    build: ./Vehicle-Service
+    container_name: vehicle-service
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://vehicle-db:5432/vehicle_db
+      - SPRING_DATASOURCE_USERNAME=vehicle_admin
+      - SPRING_DATASOURCE_PASSWORD=vehicle_password
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - SPRING_RABBITMQ_HOST=rabbitmq
+    depends_on:
+      - vehicle-db
+      - discovery-server
+      - rabbitmq
+    networks:
+      - carrental-network
+
+  reservation-service:
+    build: ./Reservation-Service
+    container_name: reservation-service
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://reservation-db:5432/reservation_db
+      - SPRING_DATASOURCE_USERNAME=res_admin
+      - SPRING_DATASOURCE_PASSWORD=res_password
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - SPRING_RABBITMQ_HOST=rabbitmq
+    depends_on:
+      - reservation-db
+      - discovery-server
+      - rabbitmq
+    networks:
+      - carrental-network
+
+  payment-service:
+    build: ./Payment-Service
+    container_name: payment-service
+    ports:
+      - "8084:8084"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://payment-db:5432/payment_db
+      - SPRING_DATASOURCE_USERNAME=payment_admin
+      - SPRING_DATASOURCE_PASSWORD=payment_password
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - SPRING_RABBITMQ_HOST=rabbitmq
+    depends_on:
+      - payment-db
+      - discovery-server
+      - rabbitmq
+    networks:
+      - carrental-network
+
+  agency-service:
+    build: ./Agency-Service
+    container_name: agency-service
+    ports:
+      - "8085:8085"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://agency-db:5432/agency_db
+      - SPRING_DATASOURCE_USERNAME=agency_admin
+      - SPRING_DATASOURCE_PASSWORD=agency_password
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+    depends_on:
+      - agency-db
+      - discovery-server
+    networks:
+      - carrental-network
+
+  review-service:
+    build: ./Review-Service
+    container_name: review-service
+    ports:
+      - "8086:8086"
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://review-db:27017/review_db
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+    depends_on:
+      - review-db
+      - discovery-server
+    networks:
+      - carrental-network
+
+networks:
+  carrental-network:
+    driver: bridge
+
+volumes:
+  user_data:
+  vehicle_data:
+  reservation_data:
+  payment_data:
+  agency_data:
+  review_data:

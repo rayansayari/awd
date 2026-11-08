@@ -1,0 +1,135 @@
+@startuml Classes_Vehicle_Service
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+
+package "com.carrental.vehicle.domain" {
+    enum VehicleStatus {
+        AVAILABLE
+        RENTED
+        MAINTENANCE
+        OUT_OF_SERVICE
+    }
+
+    enum FuelType {
+        ESSENCE
+        DIESEL
+        HYBRIDE
+        ELECTRIQUE
+    }
+
+    enum Transmission {
+        MANUELLE
+        AUTOMATIQUE
+    }
+
+    class Category {
+        - id: Long
+        - name: String
+        - description: String
+        - baseRate: BigDecimal
+    }
+
+    class Vehicle {
+        - id: Long
+        - brand: String
+        - model: String
+        - year: Integer
+        - licensePlate: String
+        - color: String
+        - seatingCapacity: Integer
+        - transmission: Transmission
+        - fuelType: FuelType
+        - pricePerDay: BigDecimal
+        - mileage: Double
+        - status: VehicleStatus
+        - agencyId: Long
+        - imageUrl: String
+        - createdAt: LocalDateTime
+    }
+
+    Vehicle --> VehicleStatus
+    Vehicle --> FuelType
+    Vehicle --> Transmission
+    Vehicle "*" --> "1" Category : appartient à >
+}
+
+package "com.carrental.vehicle.dto" {
+    class VehicleDTO {
+        + id: Long
+        + brand: String
+        + model: String
+        + year: Integer
+        + licensePlate: String
+        + pricePerDay: BigDecimal
+        + status: VehicleStatus
+        + agencyId: Long
+        + categoryId: Long
+        + categoryName: String
+        + imageUrl: String
+    }
+
+    class VehicleSearchCriteria {
+        + brand: String
+        + categoryId: Long
+        + agencyId: Long
+        + maxPrice: BigDecimal
+        + transmission: Transmission
+        + fuelType: FuelType
+        + availableOnly: Boolean
+    }
+
+    class AvailabilityResponse {
+        + vehicleId: Long
+        + available: Boolean
+        + pricePerDay: BigDecimal
+        + message: String
+    }
+}
+
+package "com.carrental.vehicle.repository" {
+    interface VehicleRepository {
+        + findByAgencyId(agencyId: Long): List<Vehicle>
+        + findByStatus(status: VehicleStatus): List<Vehicle>
+        + findByLicensePlate(licensePlate: String): Optional<Vehicle>
+    }
+
+    interface CategoryRepository {
+        + findByName(name: String): Optional<Category>
+    }
+}
+
+package "com.carrental.vehicle.service" {
+    interface VehicleService {
+        + getAllVehicles(): List<VehicleDTO>
+        + getVehicleById(id: Long): VehicleDTO
+        + searchVehicles(criteria: VehicleSearchCriteria): List<VehicleDTO>
+        + checkAvailability(id: Long): AvailabilityResponse
+        + createVehicle(dto: VehicleDTO): VehicleDTO
+        + updateVehicle(id: Long, dto: VehicleDTO): VehicleDTO
+        + updateStatus(id: Long, status: VehicleStatus): VehicleDTO
+        + deleteVehicle(id: Long): void
+    }
+}
+
+package "com.carrental.vehicle.controller" {
+    class VehicleController {
+        - vehicleService: VehicleService
+        + getAll(): ResponseEntity<List<VehicleDTO>>
+        + getById(id: Long): ResponseEntity<VehicleDTO>
+        + search(criteria: VehicleSearchCriteria): ResponseEntity<List<VehicleDTO>>
+        + checkAvailability(id: Long): ResponseEntity<AvailabilityResponse>
+        + create(dto: VehicleDTO): ResponseEntity<VehicleDTO>
+        + update(id: Long, dto: VehicleDTO): ResponseEntity<VehicleDTO>
+        + updateStatus(id: Long, status: VehicleStatus): ResponseEntity<VehicleDTO>
+        + delete(id: Long): ResponseEntity<Void>
+    }
+}
+
+VehicleController --> VehicleService
+VehicleService ..> VehicleRepository
+VehicleService ..> CategoryRepository
+VehicleRepository --> Vehicle
+CategoryRepository --> Category
+
+@enduml

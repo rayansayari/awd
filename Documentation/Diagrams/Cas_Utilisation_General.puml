@@ -1,0 +1,86 @@
+@startuml Cas_Utilisation_General_CarRental
+!theme plain
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+actor "Visiteur / Client" as Client
+actor "Employé d'Agence" as Agent
+actor "Administrateur" as Admin
+
+rectangle "Plateforme CarRental" {
+    package "Authentification & Profil" {
+        usecase "S'inscrire / Se connecter" as UC_Auth
+        usecase "Gérer son profil utilisateur" as UC_Profile
+        usecase "Gérer les rôles et permissions" as UC_ManageRoles
+    }
+
+    package "Catalogue & Flotte" {
+        usecase "Consulter et filtrer les véhicules" as UC_SearchVehicles
+        usecase "Consulter les détails d'un véhicule" as UC_ViewVehicle
+        usecase "Ajouter / Modifier / Supprimer un véhicule" as UC_ManageVehicles
+        usecase "Mettre à jour l'état & disponibilité" as UC_UpdateStatus
+    }
+
+    package "Réservations" {
+        usecase "Vérifier la disponibilité pour dates" as UC_CheckAvail
+        usecase "Réserver un véhicule" as UC_CreateRes
+        usecase "Consulter l'historique des réservations" as UC_ViewHistory
+        usecase "Modifier / Annuler une réservation" as UC_CancelRes
+        usecase "Valider la prise en charge / restitution" as UC_ValidateHandover
+    }
+
+    package "Paiement & Facturation" {
+        usecase "Effectuer le paiement en ligne" as UC_Pay
+        usecase "Consulter et télécharger la facture" as UC_Invoice
+        usecase "Traiter les remboursements" as UC_Refund
+    }
+
+    package "Agences" {
+        usecase "Localiser les agences de retrait" as UC_LocateAgencies
+        usecase "Gérer les agences et employés" as UC_ManageAgencies
+    }
+
+    package "Avis & Évaluations" {
+        usecase "Laisser un avis et une note" as UC_LeaveReview
+        usecase "Consulter les avis clients" as UC_ReadReviews
+        usecase "Modérer les avis" as UC_ModerateReviews
+    }
+
+    package "Supervision" {
+        usecase "Consulter le tableau de bord global" as UC_Dashboard
+    }
+}
+
+Client --> UC_Auth
+Client --> UC_Profile
+Client --> UC_SearchVehicles
+Client --> UC_ViewVehicle
+Client --> UC_CheckAvail
+Client --> UC_CreateRes
+Client --> UC_ViewHistory
+Client --> UC_CancelRes
+Client --> UC_Pay
+Client --> UC_Invoice
+Client --> UC_LocateAgencies
+Client --> UC_LeaveReview
+Client --> UC_ReadReviews
+
+UC_CreateRes ..> UC_CheckAvail : <<include>>
+UC_CreateRes ..> UC_Pay : <<include>>
+UC_Pay ..> UC_Invoice : <<include>>
+UC_CancelRes ..> UC_Refund : <<extend>>
+
+Agent --> UC_Auth
+Agent --> UC_ManageVehicles
+Agent --> UC_UpdateStatus
+Agent --> UC_ValidateHandover
+Agent --> UC_ReadReviews
+
+Admin --> UC_ManageRoles
+Admin --> UC_ManageAgencies
+Admin --> UC_ModerateReviews
+Admin --> UC_Dashboard
+Admin --|> Agent
+
+@enduml

@@ -1,0 +1,76 @@
+@startuml Deploiement_Docker_CarRental
+!theme plain
+skinparam nodeStyle rectangle
+
+title Diagramme de Déploiement Conteneurisé (Docker & Docker Compose)
+
+node "Poste Client / Utilisateur" {
+    artifact "Navigateur Web (Chrome/Firefox/Edge)" as Browser
+}
+
+node "Hôte Docker (Réseau: carrental-net)" {
+    node "Conteneur: frontend-angular" {
+        component "Nginx Web Server\n(Angular 17 Build)\nPort Hôte: 4200:80" as C_Angular
+    }
+
+    node "Conteneur: eureka-server" {
+        component "Spring Cloud Eureka Server\nPort Hôte: 8761:8761" as C_Eureka
+    }
+
+    node "Conteneur: api-gateway" {
+        component "Spring Cloud Gateway\nPort Hôte: 8080:8080" as C_Gateway
+    }
+
+    node "Conteneur: rabbitmq-broker" {
+        queue "RabbitMQ 3-Management\nPorts: 5672 / 15672" as C_RabbitMQ
+    }
+
+    node "Microservices Métier Spring Boot 3" {
+        component "user-service:8081" as C_User
+        component "vehicle-service:8082" as C_Vehicle
+        component "reservation-service:8083" as C_Res
+        component "payment-service:8084" as C_Pay
+        component "agency-service:8085" as C_Agency
+        component "review-service:8086" as C_Review
+    }
+
+    node "Conteneurs Bases de Données (Volumes Persistants)" {
+        database "user-db (PostgreSQL)\nPort: 5432" as CD_User
+        database "vehicle-db (PostgreSQL)\nPort: 5433" as CD_Vehicle
+        database "reservation-db (PostgreSQL)\nPort: 5434" as CD_Res
+        database "payment-db (PostgreSQL)\nPort: 5435" as CD_Pay
+        database "agency-db (PostgreSQL)\nPort: 5436" as CD_Agency
+        database "review-db (MongoDB)\nPort: 27017" as CD_Review
+    }
+}
+
+Browser --> C_Angular : HTTP :4200
+Browser --> C_Gateway : HTTP REST :8080
+
+C_Gateway --> C_User : Routage interne
+C_Gateway --> C_Vehicle : Routage interne
+C_Gateway --> C_Res : Routage interne
+C_Gateway --> C_Pay : Routage interne
+C_Gateway --> C_Agency : Routage interne
+C_Gateway --> C_Review : Routage interne
+
+C_User --> CD_User : JDBC
+C_Vehicle --> CD_Vehicle : JDBC
+C_Res --> CD_Res : JDBC
+C_Pay --> CD_Pay : JDBC
+C_Agency --> CD_Agency : JDBC
+C_Review --> CD_Review : Mongo Driver
+
+C_Res ..> C_RabbitMQ : AMQP
+C_Pay ..> C_RabbitMQ : AMQP
+C_Vehicle ..> C_RabbitMQ : AMQP
+
+C_Gateway ..> C_Eureka : Discovery
+C_User ..> C_Eureka : Discovery
+C_Vehicle ..> C_Eureka : Discovery
+C_Res ..> C_Eureka : Discovery
+C_Pay ..> C_Eureka : Discovery
+C_Agency ..> C_Eureka : Discovery
+C_Review ..> C_Eureka : Discovery
+
+@enduml

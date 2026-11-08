@@ -1,0 +1,119 @@
+@startuml Classes_Reservation_Service
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+
+package "com.carrental.reservation.domain" {
+    enum ReservationStatus {
+        PENDING
+        CONFIRMED
+        ACTIVE
+        COMPLETED
+        CANCELLED
+    }
+
+    class Reservation {
+        - id: Long
+        - reservationNumber: String
+        - userId: Long
+        - vehicleId: Long
+        - pickupAgencyId: Long
+        - returnAgencyId: Long
+        - startDate: LocalDate
+        - endDate: LocalDate
+        - totalDays: Long
+        - dailyRate: BigDecimal
+        - totalPrice: BigDecimal
+        - status: ReservationStatus
+        - notes: String
+        - createdAt: LocalDateTime
+        - updatedAt: LocalDateTime
+        + calculateTotal(): BigDecimal
+    }
+
+    Reservation --> ReservationStatus
+}
+
+package "com.carrental.reservation.dto" {
+    class ReservationRequest {
+        + userId: Long
+        + vehicleId: Long
+        + pickupAgencyId: Long
+        + returnAgencyId: Long
+        + startDate: LocalDate
+        + endDate: LocalDate
+        + notes: String
+    }
+
+    class ReservationResponse {
+        + id: Long
+        + reservationNumber: String
+        + userId: Long
+        + vehicleId: Long
+        + startDate: LocalDate
+        + endDate: LocalDate
+        + totalDays: Long
+        + totalPrice: BigDecimal
+        + status: ReservationStatus
+        + paymentStatus: String
+    }
+
+    class VehicleClientDTO {
+        + id: Long
+        + brand: String
+        + model: String
+        + pricePerDay: BigDecimal
+        + status: String
+    }
+}
+
+package "com.carrental.reservation.client" {
+    interface VehicleFeignClient {
+        + getVehicleById(vehicleId: Long): VehicleClientDTO
+        + checkAvailability(vehicleId: Long): Boolean
+        + updateStatus(vehicleId: Long, status: String): void
+    }
+
+    interface PaymentFeignClient {
+        + processPayment(request: Object): Object
+    }
+}
+
+package "com.carrental.reservation.repository" {
+    interface ReservationRepository {
+        + findByUserId(userId: Long): List<Reservation>
+        + findByVehicleId(vehicleId: Long): List<Reservation>
+        + findByPickupAgencyId(agencyId: Long): List<Reservation>
+        + findOverlappingReservations(vehicleId: Long, start: LocalDate, end: LocalDate): List<Reservation>
+    }
+}
+
+package "com.carrental.reservation.service" {
+    interface ReservationService {
+        + createReservation(req: ReservationRequest): ReservationResponse
+        + getReservationById(id: Long): ReservationResponse
+        + getUserReservations(userId: Long): List<ReservationResponse>
+        + confirmReservation(id: Long): ReservationResponse
+        + cancelReservation(id: Long): ReservationResponse
+        + completeReservation(id: Long): ReservationResponse
+    }
+}
+
+package "com.carrental.reservation.controller" {
+    class ReservationController {
+        - reservationService: ReservationService
+        + create(req: ReservationRequest): ResponseEntity<ReservationResponse>
+        + getById(id: Long): ResponseEntity<ReservationResponse>
+        + getByUser(userId: Long): ResponseEntity<List<ReservationResponse>>
+        + confirm(id: Long): ResponseEntity<ReservationResponse>
+        + cancel(id: Long): ResponseEntity<ReservationResponse>
+    }
+}
+
+ReservationController --> ReservationService
+ReservationService ..> ReservationRepository
+ReservationService ..> VehicleFeignClient
+ReservationService ..> PaymentFeignClient
+ReservationRepository --> Reservation
+
+@enduml
